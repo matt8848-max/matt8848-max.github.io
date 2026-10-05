@@ -51,7 +51,7 @@ persona/
 ## 关键约束 / 已踩过的坑
 
 1. **不要给 `Dioxus.toml` 加 `base_path`**。本站是用户根站点（`<user>.github.io`），默认 `"."` 时资源路径为 `/./assets/...`，线上已验证可用；设置反而会 404。
-2. **不要用本地构建的资源 hash 去探测线上文件**。同一份源码在本地与 CI 生成的 `-dxh<hash>` 不同（实测本地 JS `webpage-dxh66d666ec6ba235e.js`，线上 `webpage-dxh9cd97115aeea9ed.js`）。核对线上资源应从线上的 `index.html` / JS / wasm 中解析实际文件名。
+2. **不要用本地构建的资源 hash 去探测线上文件**。同一份源码在本地与 CI 生成的 `-dxh<hash>` 不同（实测本地 JS `webpage-dxh66d666ec6ba235e.js`，线上 `webpage-dxh9cd97115aeea9ed.js`）；但 CI 多次构建之间是可复现的。核对线上资源应从线上的 `index.html` → JS → wasm 逐层解析实际文件名（CSS / 图标的名字只存在于 wasm 二进制内）。
 3. **`webpage/` 目录内不允许存在 `.git`**。它历史上是一个嵌套仓库，会被当作 gitlink（submodule），导致 CI checkout 后目录为空、构建失败；已删除，不要重新 `git init`。
 4. Dioxus 资源引用一律使用绝对路径：`asset!("/assets/xxx.css")`。
 5. Windows 下不要依赖 `cd dir && cargo ...` 前缀（中文路径会导致 `cd` 失效），统一用 `--manifest-path` 或绝对路径。
