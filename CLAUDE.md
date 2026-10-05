@@ -44,7 +44,9 @@ persona/
 - **产物路径（硬编码在 CI 中）**：`webpage/target/dx/webpage/release/web/public`
   其中的 `webpage` 来自 `Cargo.toml` 的 `package.name`。**重命名 crate 必须同步修改 `deploy.yml` 的 `path`。**
 - 仓库 `Settings → Pages → Source` 必须为 **GitHub Actions**
-- 实测：CI 从零到部署成功约 80 秒（装 dx 3s、构建 48s）
+- 实测（本仓库 ubuntu-latest）：
+  - 首次（无缓存）：全程约 80 秒，其中 `dx build` 48s
+  - 缓存命中（`Swatinem/rust-cache`）：全程约 53 秒，其中 `dx build` 15s；装 `dx` 约 2s
 
 ## 关键约束 / 已踩过的坑
 
