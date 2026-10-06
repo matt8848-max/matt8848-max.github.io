@@ -8,6 +8,7 @@ mod components;
 mod data;
 mod pages;
 mod route;
+mod tags;
 
 use std::rc::Rc;
 

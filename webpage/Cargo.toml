@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 dioxus = { version = "0.7.1", features = ["router"] }
+web-sys = { version = "0.3.106", features = ["Window"] }
 
 [features]
 default = ["web"]

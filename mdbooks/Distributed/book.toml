@@ -1,0 +1,7 @@
+[book]
+title = "分布式"
+authors = ["matt8848-max"]
+language = "en"
+
+[output.html]
+mathjax-support = true
