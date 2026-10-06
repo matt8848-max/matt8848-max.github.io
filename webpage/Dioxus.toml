@@ -1,9 +1,14 @@
 [application]
 
+# 用户静态目录：dx 会把该目录整棵递归复制进站点根，且不做文件名 hash（保持原名与相对结构）。
+# build.rs 生成的书籍静态页（含 mdbook 产物）就放在这里，例如 public/books/<id>/index.html
+# 会以 /books/<id>/index.html 的形式对外提供，从而保证 mdbook 内部的相对链接依然有效。
+public_dir = "public"
+
 [web.app]
 
 # HTML title tag content
-title = "webpage"
+title = "Persona"
 
 # include `assets` in web platform
 [web.resource]
