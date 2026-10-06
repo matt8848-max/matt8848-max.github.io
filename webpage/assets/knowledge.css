@@ -1,0 +1,95 @@
+/* 知识库样式：搜索框 + 书籍卡片网格 */
+
+.kb {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.kb-topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kb-back {
+    padding: 8px 14px;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.kb-back:hover {
+    background: var(--surface-hover);
+}
+
+.kb-title {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.kb-search {
+    width: 100%;
+    padding: 16px 18px;
+    margin-bottom: 32px;
+    font-size: 1.05rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+}
+
+.kb-search:focus {
+    border-color: var(--accent);
+}
+
+.kb-empty {
+    color: var(--text-muted);
+}
+
+.kb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* 书籍卡片：书本图案在上，标题与简介在下，整体是一个大按钮 */
+.book-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.book-card:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.book-card-icon {
+    font-size: 2.6rem;
+    line-height: 1;
+}
+
+.book-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.book-card-intro {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+}

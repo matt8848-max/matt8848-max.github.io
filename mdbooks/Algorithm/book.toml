@@ -1,0 +1,7 @@
+[book]
+title = "算法"
+authors = ["matt8848-max"]
+language = "zh_cn"
+
+[output.html]
+mathjax-support = true

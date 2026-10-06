@@ -1,51 +1,47 @@
-# Development
+# webpage
 
-Your new bare-bones project includes minimal organization with a single `main.rs` file and a few assets.
+个人主页的 Dioxus（web/wasm）前端。
+
+## 结构
 
 ```
-project/
-├─ assets/ # Any assets that are used by the app should be placed here
-├─ src/
-│  ├─ main.rs # main.rs is the entry point to your application and currently contains all components for the app
-├─ Cargo.toml # The Cargo.toml file defines the dependencies and feature flags for your project
+webpage/
+├── Dioxus.toml        # 应用配置；application.public_dir = "public"
+├── build.rs           # 编译期：汇总内容源，生成静态页与数据模块
+├── build/util.rs      # 构建脚本的纯逻辑（标识生成 / HTML 注入 / 文章模板）
+├── public/            # 生成物（gitignore）：books/ 下的书籍静态页与 mdbook 产物
+├── src/
+│   ├── main.rs        # 启动入口（LaunchBuilder + HashHistory）
+│   ├── app.rs         # 根组件（图标 + 基础样式 + Router）
+│   ├── route.rs       # Route 枚举（/ 、/knowledge、/games、兜底 404）
+│   ├── data.rs        # include!(OUT_DIR)：书籍/游戏数据 + 检索逻辑
+│   ├── pages/         # home / knowledge / games / not_found
+│   └── components/    # book_card 等可复用组件
+├── tests/build_util.rs# 构建脚本纯逻辑的集成测试
+└── assets/            # base.css + 每页一个 CSS + favicon.ico
 ```
 
-### Automatic Tailwind (Dioxus 0.7+)
+## 内容从哪来
 
-As of Dioxus 0.7, there no longer is a need to manually install tailwind. Simply `dx serve` and you're good to go!
+内容源在仓库根：`books/`（单篇 Markdown）、`mdbooks/`（mdbook 工程）、`games/`（一个游戏一个 TOML）。
+`build.rs` 在编译期把它们转成 `public/books/**`（静态页，含左上角浮动「返回主页」按钮），
+并生成 `OUT_DIR/books.rs`、`OUT_DIR/games.rs` 供前端 `include!`。
 
-Automatic tailwind is supported by checking for a file called `tailwind.css` in your app's manifest directory (next to Cargo.toml). To customize the file, use the dioxus.toml:
+`build.rs` 需要 PATH 中有 `mdbook`（本地 v0.5.4）。
 
-```toml
-[application]
-tailwind_input = "my.css"
-tailwind_output = "assets/out.css" # also customize the location of the out file!
-```
-
-### Tailwind Manual Install
-
-To use tailwind plugins or manually customize tailwind, you can can install the Tailwind CLI and use it directly.
-
-### Tailwind
-1. Install npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
-2. Install the Tailwind CSS CLI: https://tailwindcss.com/docs/installation/tailwind-cli
-3. Run the following command in the root of the project to start the Tailwind CSS compiler:
+## 常用命令
 
 ```bash
-npx @tailwindcss/cli -i ./input.css -o ./assets/tailwind.css --watch
+cargo check                       # 类型检查
+cargo test                        # 测试
+cargo clippy --all-targets -- -D warnings
+cargo fmt
+dx build --release --platform web # 生产构建
 ```
 
-### Serving Your App
-
-Run the following command in the root of your project to start developing with the default platform:
+预览：
 
 ```bash
-dx serve
+uv run --no-project python -m http.server 8088 \
+  --directory target/dx/webpage/release/web/public
 ```
-
-To run for a different platform, use the `--platform platform` flag. E.g.
-```bash
-dx serve --platform desktop
-```
-
-

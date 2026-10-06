@@ -1,0 +1,13 @@
+# 短文集清单：每篇 Markdown 直接渲染为一个静态页。
+#
+# 字段说明：
+#   name  —— 展示名称（知识库卡片标题）
+#   path  —— 相对本文件所在目录（books/）的 Markdown 路径
+#   intro —— 一句话简介（知识库卡片副标题）
+#   id    —— 可选的 URL 短名（ASCII）。中文文件名建议显式指定，否则由 path 自动推导。
+
+[[book]]
+name = "WSL2：安装 CUDA、中文字体与 torch"
+path = "WSL2_Ubuntu安装CUDA、中文字体、torch.md"
+id = "wsl2-cuda-torch"
+intro = "在 WSL2 的 Ubuntu 中配置 CUDA、挂载中文字体并安装 PyTorch 的完整记录。"

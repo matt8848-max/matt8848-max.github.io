@@ -1,0 +1,33 @@
+/* 全站基础样式：仅包含全局重置与主题变量。
+   各页面的具体样式放在对应的独立 CSS 中
+   （home.css / knowledge.css / games.css / not_found.css）。 */
+
+:root {
+    --bg: #0f1116;
+    --surface: #171a21;
+    --surface-hover: #1f2430;
+    --text: #e8eaf0;
+    --text-muted: #9aa3b2;
+    --accent: #4f46e5;
+    --accent-hover: #6366f1;
+    --border: #2a2f3a;
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+}

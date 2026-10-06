@@ -1,38 +1,19 @@
-use dioxus::prelude::*;
+//! 个人主页前端入口。
+//!
+//! 使用哈希路由（`HashHistory`）：GitHub Pages 不做 SPA 回退，
+//! 哈希路由可避免直接刷新子路径时 404，并让未知路由稳定落到站点自己的 404 页面。
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const HEADER_SVG: Asset = asset!("/assets/header.svg");
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+mod app;
+mod components;
+mod data;
+mod pages;
+mod route;
 
+use std::rc::Rc;
+
+/// 站点启动入口。
 fn main() {
-    dioxus::launch(App);
-}
-
-#[component]
-fn App() -> Element {
-    rsx! {
-        document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS } document::Link { rel: "stylesheet", href: TAILWIND_CSS }
-        Hero {}
-
-    }
-}
-
-#[component]
-pub fn Hero() -> Element {
-    rsx! {
-        div {
-            id: "hero",
-            img { src: HEADER_SVG, id: "header" }
-            div { id: "links",
-                a { href: "https://dioxuslabs.com/learn/0.7/", "📚 Learn Dioxus" }
-                a { href: "https://dioxuslabs.com/awesome", "🚀 Awesome Dioxus" }
-                a { href: "https://github.com/dioxus-community/", "📡 Community Libraries" }
-                a { href: "https://github.com/DioxusLabs/sdk", "⚙️ Dioxus Development Kit" }
-                a { href: "https://marketplace.visualstudio.com/items?itemName=DioxusLabs.dioxus", "💫 VSCode Extension" }
-                a { href: "https://discord.gg/XgGxMSkvUM", "👋 Community Discord" }
-            }
-        }
-    }
+    dioxus::LaunchBuilder::new()
+        .with_cfg(dioxus::web::Config::new().history(Rc::new(dioxus::web::HashHistory::new(false))))
+        .launch(app::App);
 }

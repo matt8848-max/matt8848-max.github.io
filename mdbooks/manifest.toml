@@ -1,0 +1,13 @@
+# mdbook 书籍清单：每个条目指向一个 mdbook 工程目录，构建后整体嵌入到 public/books/<id>/。
+#
+# 字段说明：
+#   name  —— 展示名称（知识库卡片标题）
+#   path  —— 相对本文件所在目录（mdbooks/）的 mdbook 工程目录
+#   intro —— 一句话简介（知识库卡片副标题）
+#   id    —— 可选的 URL 短名（ASCII），缺省时由 path 自动推导。
+
+[[book]]
+name = "算法"
+path = "Algorithm"
+id = "algorithm"
+intro = "《算法》学习笔记，由 mdbook 构建的多页书籍。"

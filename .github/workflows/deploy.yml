@@ -41,6 +41,13 @@ jobs:
         with:
           tool: dioxus-cli@0.7.10
 
+      # build.rs 会调用 mdbook 构建 mdbooks/ 下的书籍（本地已安装；CI 需显式安装）
+      # 版本需与本地保持一致，避免产物差异
+      - name: Install mdbook
+        uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook@0.5.4
+
       - name: Build web app
         run: dx build --release --platform web
 

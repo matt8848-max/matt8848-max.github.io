@@ -6,9 +6,10 @@
 
 - **目标**：个人静态主页，托管于 GitHub Pages
 - **线上地址**：https://matt8848-max.github.io/
-- **技术栈**：Rust + Dioxus 0.7.1（web/wasm 端）+ Tailwind CSS v4（由 dx 自动获取）
-- **需求文档**：`构建设想.md` —— 主页为按钮入口，下设「游戏个人评价」「学习笔记」「个人小项目列表」
-- **代码位置**：应用代码在 `webpage/`（crate 根）；仓库根目录只放 CI 与文档
+- **技术栈**：Rust + Dioxus 0.7.1（web/wasm 端，含 `router`）+ 手写 CSS（每页一个 CSS 文件）
+- **页面**：主页（按钮入口）→「知识库」「游戏评价」；未知路由渲染 404 页
+- **路由**：使用 `HashHistory`（`src/main.rs` 的 `LaunchBuilder`），规避 GitHub Pages 无 SPA 回退的问题
+- **代码位置**：应用代码在 `webpage/`（crate 根）；仓库根目录放内容源（`books/` `mdbooks/` `games/`）与 CI 文档
 
 ## 仓库结构
 
@@ -16,13 +17,21 @@
 persona/
 ├── .agents/skills/rustweb/       # Rust/Web 开发规范知识库（编码 / 测试 / 工具链 / 部署）
 ├── .github/workflows/deploy.yml  # 构建并部署到 GitHub Pages
+├── books/                        # 短文集：*.md + manifest.toml（名称/路径/简介）
+├── mdbooks/                      # mdbook 工程：<书名>/book.toml + manifest.toml
+├── games/                        # 游戏评价：一个游戏一个 *.toml（当前为空）
 ├── webpage/                      # Dioxus 应用（crate 根，勿改名）
 │   ├── Cargo.toml                # package.name = "webpage"，CI 产物路径依赖它
-│   ├── Dioxus.toml               # 不含 base_path（用户根站点，走默认 "."）
-│   ├── src/main.rs
-│   └── assets/                   # main.css / tailwind.css / header.svg / favicon.ico
-└── 构建设想.md
+│   ├── Dioxus.toml               # 不含 base_path；application.public_dir = "public"
+│   ├── build.rs                  # 汇总 books/ mdbooks/ games/，生成静态页与数据模块
+│   ├── build/util.rs             # 构建脚本的纯逻辑（被 tests/build_util.rs 复用测试）
+│   ├── public/                   # build.rs 生成物（gitignore）：书籍静态页 / mdbook 产物
+│   ├── src/                      # main / app / route / data + pages/ + components/
+│   ├── tests/build_util.rs       # 构建脚本纯逻辑的集成测试
+│   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/not_found）+ favicon.ico
+└── 任务清单.md
 ```
+
 
 ## 常用命令
 
@@ -36,11 +45,25 @@ persona/
 | 本地预览 | `uv run --no-project python -m http.server 8088 --directory webpage/target/dx/webpage/release/web/public` |
 
 本机没有 `python` / `py` / `node`，起静态服务必须用 `uv run --no-project python`。
+`dx build` / `dx serve` 会触发 `build.rs`，它需要 PATH 中有 `mdbook`（本地 MDbook v0.5.4，CI 由 `taiki-e/install-action` 安装 `mdbook@0.5.4`）。缺 `mdbook` 时仅告警、跳过 mdbook 书籍。
+
+## 内容管线（书籍 / 游戏）
+
+- 内容源在仓库根：`books/`（单篇 `.md`）、`mdbooks/`（mdbook 工程）、`games/`（一个游戏一个 `.toml`）
+- 两个书籍文件夹各有一个 `manifest.toml`，用 `[[book]]` 记录 `name` / `path` / `intro` /（可选）`id`
+- `webpage/build.rs` 在编译期：
+  - 用 `pulldown-cmark` 把 `books/*.md` 转成静态 HTML → `webpage/public/books/<id>.html`
+  - 调 `mdbook build --dest-dir` 把 mdbook 输出到 `webpage/public/books/<id>/`
+  - 给上述所有 HTML **注入左上角浮动「返回主页」按钮**（`build/util.rs` 的 `inject_home_button`）
+  - 汇总成 `OUT_DIR/books.rs` / `OUT_DIR/games.rs`，由 `src/data.rs` 用 `include!` 引入
+- **静态资源如何进产物**：`Dioxus.toml` 的 `application.public_dir = "public"`（dx 默认值）。dx 会把 `webpage/public/` 整棵递归复制进站点根，**且不 hash 文件名 / 不改变相对结构**，因此 mdbook 内部相对链接与预先命名的资源（如 `css/general-xxxx.css`）都保持有效
+- 页面对书籍的链接使用站点根绝对路径（`/books/<id>.html`、`/books/<id>/index.html`），点击即整页跳转到静态页
+
 
 ## 构建与部署流水线
 
 - 工作流：`.github/workflows/deploy.yml`，`push main` 或手动 `workflow_dispatch` 触发
-- 步骤：checkout → 装 wasm32 工具链 → `Swatinem/rust-cache` → `taiki-e/install-action` 装 `dioxus-cli@0.7.10` → `dx build --release --platform web` → `configure-pages` → `upload-pages-artifact` → `deploy-pages`
+- 步骤：checkout → 装 wasm32 工具链 → `Swatinem/rust-cache` → `taiki-e/install-action` 装 `dioxus-cli@0.7.10` → `taiki-e/install-action` 装 `mdbook@0.5.4` → `dx build --release --platform web` → `configure-pages` → `upload-pages-artifact` → `deploy-pages`
 - **产物路径（硬编码在 CI 中）**：`webpage/target/dx/webpage/release/web/public`
   其中的 `webpage` 来自 `Cargo.toml` 的 `package.name`。**重命名 crate 必须同步修改 `deploy.yml` 的 `path`。**
 - 仓库 `Settings → Pages → Source` 必须为 **GitHub Actions**
@@ -55,6 +78,9 @@ persona/
 3. **`webpage/` 目录内不允许存在 `.git`**。它历史上是一个嵌套仓库，会被当作 gitlink（submodule），导致 CI checkout 后目录为空、构建失败；已删除，不要重新 `git init`。
 4. Dioxus 资源引用一律使用绝对路径：`asset!("/assets/xxx.css")`。
 5. Windows 下不要依赖 `cd dir && cargo ...` 前缀（中文路径会导致 `cd` 失效），统一用 `--manifest-path` 或绝对路径。
+6. **不要给 `Dioxus.toml` 的 `application.public_dir` 设成 `assets/` 或相对站点根的路径以外的值**：`public_dir` 目录会被整棵复制到站点根，且**不做 hash**。构建期生成的书籍静态页必须放这里，才能既保留 mdbook 的文件名又让相对链接生效。
+7. `webpage/public/` 是**生成物**（已在 `.gitignore` 中忽略），不要手工放文件进去（会被 `build.rs` 的清理逻辑覆盖 `public/books/`）。
+8. 内容清单 `books/manifest.toml` / `mdbooks/manifest.toml` 的 `id` 建议显式给出 ASCII 短名：中文文件名自动推导出的别名不稳定，会导致线上 URL 变化。
 
 ## 编码规范
 

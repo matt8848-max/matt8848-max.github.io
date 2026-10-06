@@ -1,0 +1,43 @@
+/* 主页样式：标题 + 一排排的入口按钮 */
+
+.home {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 96px 20px;
+    text-align: center;
+}
+
+.home-title {
+    margin: 0;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    letter-spacing: 0.04em;
+}
+
+.home-subtitle {
+    margin: 12px 0 48px;
+    color: var(--text-muted);
+}
+
+.home-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-button {
+    display: block;
+    padding: 22px 24px;
+    font-size: 1.25rem;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.home-button:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
