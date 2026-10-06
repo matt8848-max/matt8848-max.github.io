@@ -4,32 +4,39 @@
 //! （`tests/build_util.rs`）复用，从而让构建期的纯逻辑也能被 `cargo test` 覆盖。
 //!
 //! 这里的函数负责：生成稳定的 ASCII 标识、HTML 转义、拼接文章页模板，
-//! 以及把「返回主页」浮动按钮注入任意 HTML 页面。
+//! 把「返回主页 / 返回知识库」浮动按钮注入任意 HTML 页面。
 
-/// 注入到静态页左上角的浮动「返回主页」按钮（含内联样式与少量布局避让）。
+/// 注入到静态页右下角的浮动导航按钮组：`返回主页` + `返回知识库`。
 ///
-/// 使用 `target="_top"`，以便在书籍被 `iframe` 嵌入时也能让最外层窗口跳回主页。
-/// 内联样式避免为静态页额外引入样式表请求；附带的两条 mdbook 规则用于给浮动按钮
-/// 预留顶部空间，防止遮挡侧边栏目录（可见时）或顶部菜单栏（隐藏侧边栏时）。
-pub fn home_button_snippet(home_href: &str) -> String {
+/// 之所以放在**右下角**而非左上角：书籍静态页（尤其 mdbook 产物）左上角是侧边栏目录/
+/// 菜单栏，浮动按钮会遮挡内容；右下角基本是空白页脚区，不会挡住正文。
+///
+/// 两个按钮均使用 `target="_top"`，以便在书籍被 `iframe` 嵌入时也能让最外层窗口跳转。
+/// 内联样式避免为静态页额外引入样式表请求。返回知识库指向哈希路由
+/// （`/#/knowledge`），整页回到站点根后由前端路由渲染知识库页。
+pub fn nav_buttons_snippet(home_href: &str, knowledge_href: &str) -> String {
     format!(
-        "<style>#mdbook-sidebar .sidebar-scrollbox{{padding-top:3.25rem}}\
-        html.sidebar-hidden #mdbook-menu-bar{{margin-top:3.25rem}}</style>\
-        <a href=\"{href}\" target=\"_top\" style=\"position:fixed;top:16px;left:16px;\
-        z-index:2147483647;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;\
-        border-radius:999px;background:#4f46e5;color:#fff;\
-        font-family:system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;\
-        font-size:14px;line-height:1;text-decoration:none;\
-        box-shadow:0 4px 14px rgba(0,0,0,.25)\">← 返回主页</a>",
-        href = home_href
+        "<div style=\"position:fixed;right:16px;bottom:16px;z-index:2147483647;\
+        display:flex;flex-direction:column;align-items:flex-end;gap:8px\">\
+        <a href=\"{knowledge}\" target=\"_top\" style=\"{btn}\">← 返回知识库</a>\
+        <a href=\"{home}\" target=\"_top\" style=\"{btn}\">← 返回主页</a></div>",
+        btn = NAV_BUTTON_STYLE,
+        knowledge = knowledge_href,
+        home = home_href
     )
 }
 
-/// 把「返回主页」按钮注入到 HTML 页面末尾。
+/// 浮动导航按钮的公共内联样式（靛蓝胶囊，与站点主题一致）。
+const NAV_BUTTON_STYLE: &str = "display:inline-flex;align-items:center;gap:6px;\
+    padding:8px 14px;border-radius:999px;background:#4f46e5;color:#fff;\
+    font-family:system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;\
+    font-size:14px;line-height:1;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.25)";
+
+/// 把右下角导航按钮组注入到 HTML 页面。
 ///
 /// 优先插入到 `</body>` 之前；若页面没有 `</body>`，则直接追加到末尾。
-pub fn inject_home_button(html: &str, home_href: &str) -> String {
-    let snippet = home_button_snippet(home_href);
+pub fn inject_nav_buttons(html: &str, home_href: &str, knowledge_href: &str) -> String {
+    let snippet = nav_buttons_snippet(home_href, knowledge_href);
     match find_ignore_ascii_case(html, "</body>") {
         Some(index) => {
             let mut out = String::with_capacity(html.len() + snippet.len());
@@ -95,10 +102,10 @@ pub fn ascii_id(raw: &str) -> String {
     }
 }
 
-/// 生成单篇 Markdown 文章的完整 HTML 页面，并在末尾注入「返回主页」按钮。
+/// 生成单篇 Markdown 文章的完整 HTML 页面，并在末尾注入右下角导航按钮组。
 ///
 /// `body_html` 应为已经转换好的正文 HTML 片段（不含 `<html>` 外壳）。
-pub fn article_page(title: &str, body_html: &str, home_href: &str) -> String {
+pub fn article_page(title: &str, body_html: &str, home_href: &str, knowledge_href: &str) -> String {
     let safe_title = escape_html(title);
     let mut out = String::with_capacity(body_html.len() + ARTICLE_CSS.len() + 256);
     out.push_str("<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n");
@@ -117,7 +124,7 @@ pub fn article_page(title: &str, body_html: &str, home_href: &str) -> String {
     }
     out.push_str(body_html);
     out.push_str("\n</article>\n</body>\n</html>\n");
-    inject_home_button(&out, home_href)
+    inject_nav_buttons(&out, home_href, knowledge_href)
 }
 
 /// 文章页内联样式：深色、居中、适合长文阅读。

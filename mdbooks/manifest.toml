@@ -10,4 +10,4 @@
 name = "算法"
 path = "Algorithm"
 id = "algorithm"
-intro = "《算法》学习笔记，由 mdbook 构建的多页书籍。"
+intro = "《算法》学习笔记，主要是一些单机算法。"

@@ -16,17 +16,18 @@
 ```
 persona/
 ├── .agents/skills/rustweb/       # Rust/Web 开发规范知识库（编码 / 测试 / 工具链 / 部署）
+├── .agents/skills/addgame/       # 新增游戏评价的操作规范（可用 `addgame` skill 加载）
 ├── .github/workflows/deploy.yml  # 构建并部署到 GitHub Pages
 ├── books/                        # 短文集：*.md + manifest.toml（名称/路径/简介）
 ├── mdbooks/                      # mdbook 工程：<书名>/book.toml + manifest.toml
-├── games/                        # 游戏评价：一个游戏一个 *.toml（当前为空）
+├── games/                        # 游戏评价（一个游戏一个 *.toml）
 ├── webpage/                      # Dioxus 应用（crate 根，勿改名）
 │   ├── Cargo.toml                # package.name = "webpage"，CI 产物路径依赖它
 │   ├── Dioxus.toml               # 不含 base_path；application.public_dir = "public"
 │   ├── build.rs                  # 汇总 books/ mdbooks/ games/，生成静态页与数据模块
 │   ├── build/util.rs             # 构建脚本的纯逻辑（被 tests/build_util.rs 复用测试）
 │   ├── public/                   # build.rs 生成物（gitignore）：书籍静态页 / mdbook 产物
-│   ├── src/                      # main / app / route / data + pages/ + components/
+│   ├── src/                      # main / app / route / data / tags + pages/ + components/
 │   ├── tests/build_util.rs       # 构建脚本纯逻辑的集成测试
 │   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/not_found）+ favicon.ico
 └── 任务清单.md
@@ -51,13 +52,26 @@ persona/
 
 - 内容源在仓库根：`books/`（单篇 `.md`）、`mdbooks/`（mdbook 工程）、`games/`（一个游戏一个 `.toml`）
 - 两个书籍文件夹各有一个 `manifest.toml`，用 `[[book]]` 记录 `name` / `path` / `intro` /（可选）`id`
+- 游戏标签清单（8 个）**硬编码**在 `webpage/src/tags.rs` 的 `GAME_TAGS`；**`games/*.toml` 的 `tags` 必须取自它**
 - `webpage/build.rs` 在编译期：
   - 用 `pulldown-cmark` 把 `books/*.md` 转成静态 HTML → `webpage/public/books/<id>.html`
   - 调 `mdbook build --dest-dir` 把 mdbook 输出到 `webpage/public/books/<id>/`
-  - 给上述所有 HTML **注入左上角浮动「返回主页」按钮**（`build/util.rs` 的 `inject_home_button`）
+  - 给上述所有 HTML **注入右下角浮动导航按钮组「返回主页」「返回知识库」**（`build/util.rs` 的 `inject_nav_buttons`；知识库入口为哈希路由 `/#/knowledge`，主页为 `/`）
   - 汇总成 `OUT_DIR/books.rs` / `OUT_DIR/games.rs`，由 `src/data.rs` 用 `include!` 引入
+  - `games.rs` 生成 `GAMES`（游戏条目）；标签清单硬编码在 `src/tags.rs`，合法性由测试 `test_game_tags_should_cover_all_games` 保证
 - **静态资源如何进产物**：`Dioxus.toml` 的 `application.public_dir = "public"`（dx 默认值）。dx 会把 `webpage/public/` 整棵递归复制进站点根，**且不 hash 文件名 / 不改变相对结构**，因此 mdbook 内部相对链接与预先命名的资源（如 `css/general-xxxx.css`）都保持有效
 - 页面对书籍的链接使用站点根绝对路径（`/books/<id>.html`、`/books/<id>/index.html`），点击即整页跳转到静态页
+
+
+## 新增游戏条目
+
+游戏评价的增改规则见 `.agents/skills/addgame/`（可用 `addgame` skill 加载），要点：
+
+- 一个游戏一个文件：`games/<id>.toml`（`<id>` 为 ASCII 短名）；**文件名即列表排序依据**（`build.rs` 按文件名字典序）
+- 字段：`name`（必填）/ `platform` / `status` / `score`（10 分制）/ `tags` / `review`；**没有 `played_at`**
+- `tags` 必须取自 `webpage/src/tags.rs` 硬编码的 8 个标签之一，**该 8 分类已锁定、不再新增**；更通俗的玩法分类（RTS、4X、战棋等）写进 `review`
+- 各标签含义见 `games/README.md`「樱井政博对 8 个标签的讲解」
+- 校验流程：`cargo test`（`test_game_tags_should_cover_all_games` 校验标签合法性）→ `clippy` / `fmt` → `dx build` → 本地预览 `#/games`
 
 
 ## 构建与部署流水线
@@ -81,6 +95,7 @@ persona/
 6. **不要给 `Dioxus.toml` 的 `application.public_dir` 设成 `assets/` 或相对站点根的路径以外的值**：`public_dir` 目录会被整棵复制到站点根，且**不做 hash**。构建期生成的书籍静态页必须放这里，才能既保留 mdbook 的文件名又让相对链接生效。
 7. `webpage/public/` 是**生成物**（已在 `.gitignore` 中忽略），不要手工放文件进去（会被 `build.rs` 的清理逻辑覆盖 `public/books/`）。
 8. 内容清单 `books/manifest.toml` / `mdbooks/manifest.toml` 的 `id` 建议显式给出 ASCII 短名：中文文件名自动推导出的别名不稳定，会导致线上 URL 变化。
+9. **新增 / 修改游戏条目时，`tags` 只能取 `webpage/src/tags.rs` 硬编码的 8 个标签，禁止自造标签。** 该 8 分类**已锁定，不再新增**——更通俗的玩法分类（RTS、4X、战棋等）写进 `review` 正文。合法性由 `src/tags.rs` 的测试 `test_game_tags_should_cover_all_games` 保证。
 
 ## 编码规范
 
