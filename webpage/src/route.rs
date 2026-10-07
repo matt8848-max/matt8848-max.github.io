@@ -2,7 +2,9 @@
 
 use dioxus::prelude::*;
 
-use crate::pages::{games::Games, home::Home, knowledge::Knowledge, not_found::NotFound};
+use crate::pages::{
+    games::Games, home::Home, knowledge::Knowledge, not_found::NotFound, projects::Projects,
+};
 
 /// 站点全部路由。
 ///
@@ -18,6 +20,9 @@ pub enum Route {
     /// 游戏评价
     #[route("/games")]
     Games {},
+    /// 项目：检索并浏览自用项目
+    #[route("/projects")]
+    Projects {},
     /// 未匹配的路径：404 页面
     #[route("/:..segments")]
     NotFound { segments: Vec<String> },

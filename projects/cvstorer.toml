@@ -1,0 +1,4 @@
+# 一个自用项目词条。字段说明见 projects/README.md。
+name = "简历管理工具"
+purpose = "存储简历信息，构建简历 LaTeX 模板。"
+url = "https://github.com/matt8848-max/cvstorer"

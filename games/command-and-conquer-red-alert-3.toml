@@ -1,10 +1,10 @@
 # 单个游戏评价。字段说明见 games/README.md；
 # tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
-name = "命令与征服：红色警戒2"
+name = "命令与征服：红色警戒3"
 platform = "PC"
 status = "已通关"
-score = 10
-release_date = "2000-09-28"
-rating = "PEGI 12"
+score = 9
+release_date = "2008-10-31"
+rating = "PEGI 16"
 tags = ["Building & Crafting Games", "Games That Are Fun to Control"]
-review = """经典的即时战略（RTS）游戏，兼顾基地建设与部队微操，难度简单，非常适合 RTS 入门。"""
+review = """游戏体验可以，但过于竞技化：本意是为了和《星际争霸2》竞争，然而 CNC 玩家以娱乐向为主。"""

@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "游戏王：大师决斗"
+platform = "NS / PS / XBOX / PC"
+status = "进行中"
+score = 9
+release_date = "2022-01-19"
+rating = "PEGI 7"
+tags = ["Licensed Games", "Games That Are Fun to Control"]
+review = """非常不错的网游。本质上是卖卡广告，却也是少有的良心网游：不强制打排位，也不强制每天清日活（可以 3 天一次）。全平台发售，方便随时随地游玩；缺点是这个 IP 的难度偏大。"""

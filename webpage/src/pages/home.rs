@@ -20,6 +20,7 @@ pub fn Home() -> Element {
             nav { class: "home-nav",
                 Link { class: "home-button", to: Route::Knowledge {}, "知识库" }
                 Link { class: "home-button", to: Route::Games {}, "游戏评价" }
+                Link { class: "home-button", to: Route::Projects {}, "项目" }
             }
         }
     }

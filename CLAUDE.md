@@ -7,9 +7,9 @@
 - **目标**：个人静态主页，托管于 GitHub Pages
 - **线上地址**：https://matt8848-max.github.io/
 - **技术栈**：Rust + Dioxus 0.7.1（web/wasm 端，含 `router`）+ 手写 CSS（每页一个 CSS 文件）
-- **页面**：主页（按钮入口）→「知识库」「游戏评价」；未知路由渲染 404 页
+- **页面**：主页（按钮入口）→「知识库」「游戏评价」「项目」；未知路由渲染 404 页
 - **路由**：使用 `HashHistory`（`src/main.rs` 的 `LaunchBuilder`），规避 GitHub Pages 无 SPA 回退的问题
-- **代码位置**：应用代码在 `webpage/`（crate 根）；仓库根目录放内容源（`books/` `mdbooks/` `games/`）与 CI 文档
+- **代码位置**：应用代码在 `webpage/`（crate 根）；仓库根目录放内容源（`books/` `mdbooks/` `games/` `projects/`）与 CI 文档
 
 ## 仓库结构
 
@@ -21,6 +21,7 @@ persona/
 ├── books/                        # 短文集：*.md + manifest.toml（名称/路径/简介）
 ├── mdbooks/                      # mdbook 工程：<书名>/book.toml + manifest.toml
 ├── games/                        # 游戏评价（一个游戏一个 *.toml）
+├── projects/                     # 自用项目词条（一个项目一个 *.toml）
 ├── webpage/                      # Dioxus 应用（crate 根，勿改名）
 │   ├── Cargo.toml                # package.name = "webpage"，CI 产物路径依赖它
 │   ├── Dioxus.toml               # 不含 base_path；application.public_dir = "public"
@@ -29,7 +30,7 @@ persona/
 │   ├── public/                   # build.rs 生成物（gitignore）：书籍静态页 / mdbook 产物
 │   ├── src/                      # main / app / route / data / tags + pages/ + components/
 │   ├── tests/build_util.rs       # 构建脚本纯逻辑的集成测试
-│   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/not_found）+ favicon.ico
+│   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/projects/not_found）+ favicon.ico
 └── 任务清单.md
 ```
 
@@ -50,15 +51,16 @@ persona/
 
 ## 内容管线（书籍 / 游戏）
 
-- 内容源在仓库根：`books/`（单篇 `.md`）、`mdbooks/`（mdbook 工程）、`games/`（一个游戏一个 `.toml`）
+- 内容源在仓库根：`books/`（单篇 `.md`）、`mdbooks/`（mdbook 工程）、`games/`（一个游戏一个 `.toml`）、`projects/`（一个项目一个 `.toml`）
 - 两个书籍文件夹各有一个 `manifest.toml`，用 `[[book]]` 记录 `name` / `path` / `intro` /（可选）`id`
 - 游戏标签清单（8 个）**硬编码**在 `webpage/src/tags.rs` 的 `GAME_TAGS`；**`games/*.toml` 的 `tags` 必须取自它**
 - `webpage/build.rs` 在编译期：
   - 用 `pulldown-cmark` 把 `books/*.md` 转成静态 HTML → `webpage/public/books/<id>.html`
   - 调 `mdbook build --dest-dir` 把 mdbook 输出到 `webpage/public/books/<id>/`
   - 给上述所有 HTML **注入右下角浮动导航按钮组「返回主页」「返回知识库」**（`build/util.rs` 的 `inject_nav_buttons`；知识库入口为哈希路由 `/#/knowledge`，主页为 `/`）
-  - 汇总成 `OUT_DIR/books.rs` / `OUT_DIR/games.rs`，由 `src/data.rs` 用 `include!` 引入
+  - 汇总成 `OUT_DIR/books.rs` / `OUT_DIR/games.rs` / `OUT_DIR/projects.rs`，由 `src/data.rs` 用 `include!` 引入
   - `games.rs` 生成 `GAMES`（游戏条目）；标签清单硬编码在 `src/tags.rs`，合法性由测试 `test_game_tags_should_cover_all_games` 保证
+  - `projects.rs` 生成 `PROJECTS`（项目词条，字段 `name` / `purpose` / `url`；`url` 可为空表示不公开）
 - **静态资源如何进产物**：`Dioxus.toml` 的 `application.public_dir = "public"`（dx 默认值）。dx 会把 `webpage/public/` 整棵递归复制进站点根，**且不 hash 文件名 / 不改变相对结构**，因此 mdbook 内部相对链接与预先命名的资源（如 `css/general-xxxx.css`）都保持有效
 - 页面对书籍的链接使用站点根绝对路径（`/books/<id>.html`、`/books/<id>/index.html`），点击即整页跳转到静态页
 
@@ -67,11 +69,24 @@ persona/
 
 游戏评价的增改规则见 `.agents/skills/addgame/`（可用 `addgame` skill 加载），要点：
 
-- 一个游戏一个文件：`games/<id>.toml`（`<id>` 为 ASCII 短名）；**文件名即列表排序依据**（`build.rs` 按文件名字典序）
-- 字段：`name`（必填）/ `platform` / `status` / `score`（10 分制）/ `tags` / `review`；**没有 `played_at`**
+- 一个游戏一个文件：`games/<id>.toml`（`<id>` 为 ASCII 短名）
+- 字段：`name`（必填）/ `platform` / `status` / `score`（10 分制）/ `release_date`（ISO `YYYY-MM-DD`）/ `rating`（文字，如 `PEGI 12`）/ `tags` / `review`；**没有 `played_at`**
+- 排序在运行期完成（`src/data.rs`）：游戏按 `release_date` → `name` 升序；知识库按 `name` 升序；项目按 `name` 升序（均为 Rust 字符串序）
 - `tags` 必须取自 `webpage/src/tags.rs` 硬编码的 8 个标签之一，**该 8 分类已锁定、不再新增**；更通俗的玩法分类（RTS、4X、战棋等）写进 `review`
 - 各标签含义见 `games/README.md`「樱井政博对 8 个标签的讲解」
 - 校验流程：`cargo test`（`test_game_tags_should_cover_all_games` 校验标签合法性）→ `clippy` / `fmt` → `dx build` → 本地预览 `#/games`
+
+
+## 新增项目词条
+
+项目页（`#/projects`）列出一些自用的小项目，规则要点：
+
+- 一个项目一个文件：`projects/<id>.toml`（`<id>` 为 ASCII 短名）
+- 字段：`name`（必填）/ `purpose`（用途，可为空）/ `url`（地址，**可为空**，为空表示不公开）
+- 运行期处理（`src/data.rs` 的 `search_projects`）：关键字为空列出全部，否则对**项目名**做大小写不敏感子串匹配；结果按**项目名**升序（Rust 字符串序）
+- 项目页对地址为空的词条以灰色「地址不公开」占位（见 `src/pages/projects.rs`）；非空地址渲染为新标签页外链
+- 字段与示例见 `projects/README.md`
+- 校验流程：`cargo test`（`src/data.rs` 的 `search_projects` 用例）→ `clippy` / `fmt` → `dx build` → 本地预览 `#/projects`
 
 
 ## 构建与部署流水线

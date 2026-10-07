@@ -11,3 +11,9 @@ name = "算法"
 path = "Algorithm"
 id = "algorithm"
 intro = "《算法》学习笔记，主要是一些单机算法。"
+
+[[book]]
+name = "分布式"
+path = "Distributed"
+id = "distributed"
+intro = "分布式、微服务相关知识的学习笔记。"

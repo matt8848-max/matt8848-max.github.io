@@ -4,5 +4,7 @@ name = "群星"
 platform = "PC"
 status = "进行中"
 score = 10
+release_date = "2016-05-09"
+rating = "PEGI 7"
 tags = ["Building & Crafting Games"]
 review = """Paradox（P社）出品的太空 4X 大战略，把舞台搬到了宇宙，不受 P 社四萌历史框架的约束，非常好玩，难度适中。比较神奇的是，它的评级是 PEGI 7。"""
