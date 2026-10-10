@@ -1,6 +1,6 @@
 ---
 name: mdbookwrite
-description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 章节。当用户要求新增或编辑某本 mdbook 书的一篇 .md、处理文件内以 #AI 开头的编写任务、把章节登记到 src/SUMMARY.md、或新增一本书并在 mdbooks/manifest.toml 登记时触发。涵盖工程结构、MathJax 数学公式、可运行 Rust 代码块、#AI 任务约定与本地构建 / 预览流程。
+description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 章节。当用户要求新增或编辑某本 mdbook 书的一篇 .md、处理文件内以 #AI 开头的编写任务、把章节登记到 src/SUMMARY.md、或新增一本书并在 mdbooks/manifest.toml 登记时触发。涵盖工程结构、MathJax 数学公式、Mermaid 图表、可运行 Rust 代码块、#AI 任务约定与本地构建 / 预览流程。
 ---
 
 # mdbookwrite —— 编写单个 mdbook 文件
@@ -13,6 +13,7 @@ description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 
 - 处理文件内以 `#AI` 开头的**编写任务**（见「`#AI` 任务约定」）
 - 新增一本书：建 `book.toml` / `src/SUMMARY.md`，并在 `mdbooks/manifest.toml` 登记
 - 把新章节登记进 `src/SUMMARY.md`
+- 在章节里插入 / 修改 Mermaid 图表（见「图表（Mermaid）」）
 
 ## 工程结构
 
@@ -22,8 +23,10 @@ description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 
 mdbooks/
 ├── manifest.toml              # 书籍清单：[[book]] 的 name / path / id / intro
 └── <书名>/
-    ├── .gitignore             # 内容为一行 `book`，忽略构建产物目录
-    ├── book.toml              # 书名 / 作者 / 语言 / 输出配置
+    ├── .gitignore             # 忽略构建产物目录 `book`；用图的书另忽略 mermaid.min.js / mermaid-init.js
+    ├── book.toml              # 书名 / 作者 / 语言 / 输出配置（可含 mermaid 预处理器）
+    ├── mermaid.min.js         # 可选：mdbook-mermaid 生成物（用图的书才有，已 gitignore、不入库）
+    ├── mermaid-init.js        # 可选：mdbook-mermaid 生成物（用图的书才有，已 gitignore、不入库）
     ├── book/                  # mdbook build 产物（已被 gitignore）
     └── src/
         ├── SUMMARY.md         # 目录：登记每一章
@@ -110,6 +113,49 @@ fn hire_assistant(assistants: &Vec<usize>) {
 - 无序列表用 `+`；表格用标准 Markdown 表格（仓库正文大量使用，便于对照复杂度）。
 - 外链用 `[标题](url)`。
 
+### 图表（Mermaid）
+
+用 `mdbook-mermaid` 在章节里画流程图 / 时序图等（如 `mdbooks/BackendDevelopment`）。
+
+**写图**：正文用 ` ```mermaid ` 围栏代码块，内容为 Mermaid 语法：
+
+````markdown
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+````
+
+**某本书首次启用**（在仓库根执行）：
+
+```bash
+mdbook-mermaid install mdbooks/<书名>
+```
+
+它会：
+
+- 往该书 `book.toml` 写入配置（已配置则跳过）：
+  ```toml
+  [preprocessor.mermaid]
+  command = "mdbook-mermaid"
+
+  [output.html]
+  additional-js = ["mermaid.min.js", "mermaid-init.js"]
+  ```
+- 在书目录生成 `mermaid.min.js` / `mermaid-init.js`
+
+**关键约定**：
+
+- `mermaid.min.js` / `mermaid-init.js` 是**生成物**，已在书目录 `.gitignore` 中忽略、**不入库**；本地克隆或 CI 构建前都要能拿到——本地缺了就重跑一次 `mdbook-mermaid install`，CI 已自动生成。
+- 需要 **`mdbook-mermaid` 预处理器在 PATH**（本机 0.17.1，`cargo install mdbook-mermaid` 安装）。缺它时，声明了 `[preprocessor.mermaid]` 的书会被 mdbook **报错中断**（除非 `optional = true` 降级为告警，但那样图不渲染），整本不上线。
+- 版本要与本地一致（0.17.1）：生成的 js 与预处理器版本绑定，CI 也锁 `mdbook-mermaid@0.17.1`。
+- 深浅色主题跟随由 `mermaid-init.js` 处理，无需改动。
+- 每本用图的书都要各自跑一次 `mdbook-mermaid install`（js 是按书存放的）；新增用图的书后 CI 会自动识别，无需改 workflow。
+
+
 ## `#AI` 任务约定
 
 **以 `#AI` 开头的行是留给 AI 的编写任务标记**（`#` 与 `AI` 之间无空格，因此不会被 Markdown 当成标题）。它可能出现在正文，也可能出现在 rust 代码块内部。处理方式：
@@ -137,15 +183,23 @@ fn hire_assistant(assistants: &Vec<usize>) {
 mdbook build mdbooks/<书名> --dest-dir <临时目录>
 ```
 
-- 本地 / CI 的 mdbook 版本均为 **v0.5.4**（用 `mdbook --version` 核对）。
-- 校验用 `mdbook test mdbooks/<书名>`：它会编译所有 rust 代码块（含隐藏行），能跑通说明示例代码可用。
+- 本地 / CI 的 mdbook 版本均为 **v0.5.4**（用 `mdbook --version` 核对）；`mdbook-mermaid` 均为 **0.17.1**（用 `mdbook-mermaid --version` 核对）。
+- 校验用 `mdbook test mdbooks/<书名>`：它会编译所有 rust 代码块（含隐藏行），能跑通说明示例代码可用（mermaid 代码块不参与编译）。
 - 站点集成由 `webpage/build.rs` 的 `run_mdbook()` 完成：调用 `mdbook build <book_dir> --dest-dir public/books/<id>`，再给产物 HTML 注入「返回主页 / 返回知识库」按钮。
 - 整站预览：`cd webpage; dx build --release --platform web`，产物在 `target/dx/webpage/release/web/public/books/<id>/`，打开 `#/knowledge` 看知识库卡片。
-- `mdbook` 不在 PATH 时，`build.rs` 仅告警并跳过 mdbook 书籍。
+- `mdbook` 不在 PATH 时，`build.rs` 仅告警并跳过 mdbook 书籍；但若某本书声明了 `[preprocessor.mermaid]` 而 `mdbook-mermaid` 不在 PATH，该书会构建失败并被跳过（详见「图表（Mermaid）」）。
+- 用图的书若报 `additional-js` 找不到文件，先重跑 `mdbook-mermaid install mdbooks/<书名>` 生成 js 再构建。
 
 ## 新增一本书
 
-1. 建目录 `mdbooks/<书名>/`，写 `book.toml`（含 `mathjax-support = true`）与 `.gitignore`（一行 `book`）。
+1. 建目录 `mdbooks/<书名>/`，写 `book.toml`（含 `mathjax-support = true`）与 `.gitignore`（忽略构建产物；若用图再忽略 mermaid 生成物）：
+   ```
+   book
+
+   # mdbook-mermaid 生成物，不入库
+   mermaid.min.js
+   mermaid-init.js
+   ```
 2. 建 `src/SUMMARY.md` 与至少一篇 `src/*.md`。
 3. 在 `mdbooks/manifest.toml` 追加：
 
@@ -166,9 +220,13 @@ intro = "一句话简介"
 3. **`book/` 是产物目录**：已 gitignore，勿提交，也勿手工改其中文件。
 4. **`#AI` 标记**：处理完即删除，不要留在成品里。
 5. **改了 `book.toml` / 章节后**：重新 `dx build`（会重新调用 mdbook）。
+6. **Mermaid 生成物别提交**：`mermaid.min.js` / `mermaid-init.js` 是 `mdbook-mermaid install` 的生成物，已在书目录 `.gitignore` 忽略；本地缺了就重跑 `install`，CI 会自动生成。
+7. **用图的书别漏装预处理器**：`mdbook-mermaid` 不在 PATH 时，声明 `[preprocessor.mermaid]` 的书会被 mdbook 报错中断、整本不上线（除非 `optional = true`，但那样图不渲染）。本机用 `cargo install mdbook-mermaid`（0.17.1）。
+8. **Mermaid 围栏语言写对**：必须是 ` ```mermaid `，写成 ` ``` ` 或 ` ```text ` 都只会显示成代码块，不会被渲染成图。
 
 ## 参考
 
 - 范例章节：`mdbooks/Algorithm/src/使用场景/算法的基本概念.md`
-- 站点集成：`webpage/build.rs`（`build_mdbooks` / `run_mdbook`）、`CLAUDE.md`「内容管线」章节
+- 范例图表：`mdbooks/BackendDevelopment/src/操作系统/网络系统.md`（` ```mermaid ` 代码块）
+- 站点集成：`webpage/build.rs`（`build_mdbooks` / `run_mdbook`）、`CLAUDE.md`「内容管线」/「在 mdbook 里画图（Mermaid）」章节
 - 注释 / 测试规范：`rustweb` skill 的 `docs/coding-standards.md`

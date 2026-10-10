@@ -19,7 +19,7 @@ persona/
 ├── .agents/skills/addgame/       # 新增游戏评价的操作规范（可用 `addgame` skill 加载）
 ├── .github/workflows/deploy.yml  # 构建并部署到 GitHub Pages
 ├── books/                        # 短文集：*.md + manifest.toml（名称/路径/简介）
-├── mdbooks/                      # mdbook 工程：<书名>/book.toml + manifest.toml
+├── mdbooks/                      # mdbook 工程：<书名>/book.toml + manifest.toml（用图的书有 mermaid 资源）
 ├── games/                        # 游戏评价（一个游戏一个 *.toml）
 ├── projects/                     # 自用项目词条（一个项目一个 *.toml）
 ├── webpage/                      # Dioxus 应用（crate 根，勿改名）
@@ -48,6 +48,7 @@ persona/
 
 本机没有 `python` / `py` / `node`，起静态服务必须用 `uv run --no-project python`。
 `dx build` / `dx serve` 会触发 `build.rs`，它需要 PATH 中有 `mdbook`（本地 MDbook v0.5.4，CI 由 `taiki-e/install-action` 安装 `mdbook@0.5.4`）。缺 `mdbook` 时仅告警、跳过 mdbook 书籍。
+若书籍用了 ` ```mermaid ` 图表，`build.rs` 调 `mdbook build` 时还会拉起 `mdbook-mermaid` 预处理器，故本地也需 `mdbook-mermaid`（本地 v0.17.1，用 `mdbook-mermaid --version` 核对；CI 由 `taiki-e/install-action` 安装 `mdbook-mermaid@0.17.1`）。缺它时会让声明了 `[preprocessor.mermaid]` 的那本书构建失败（详见「关键约束」）。
 
 ## 内容管线（书籍 / 游戏）
 
@@ -57,6 +58,7 @@ persona/
 - `webpage/build.rs` 在编译期：
   - 用 `pulldown-cmark` 把 `books/*.md` 转成静态 HTML → `webpage/public/books/<id>.html`
   - 调 `mdbook build --dest-dir` 把 mdbook 输出到 `webpage/public/books/<id>/`
+  - 书名用图（` ```mermaid ` 代码块）时：构建期由 `mdbook-mermaid` 预处理器把 mermaid 代码块转成 `<pre class="mermaid">`，再由浏览器端 `mermaid.min.js` 渲染成图
   - 给上述所有 HTML **注入右下角浮动导航按钮组「返回主页」「返回知识库」**（`build/util.rs` 的 `inject_nav_buttons`；知识库入口为哈希路由 `/#/knowledge`，主页为 `/`）
   - 汇总成 `OUT_DIR/books.rs` / `OUT_DIR/games.rs` / `OUT_DIR/projects.rs`，由 `src/data.rs` 用 `include!` 引入
   - `games.rs` 生成 `GAMES`（游戏条目）；标签清单硬编码在 `src/tags.rs`，合法性由测试 `test_game_tags_should_cover_all_games` 保证
@@ -89,10 +91,25 @@ persona/
 - 校验流程：`cargo test`（`src/data.rs` 的 `search_projects` 用例）→ `clippy` / `fmt` → `dx build` → 本地预览 `#/projects`
 
 
+## 在 mdbook 里画图（Mermaid）
+
+用 `mdbook-mermaid` 在 mdbook 章节里画流程图 / 时序图等：
+
+- 正文写法：用 ` ```mermaid ` 围栏代码块，内容为 Mermaid 语法（如 `graph TD; A-->B;`）
+- 某本书首次启用：在仓库根执行 `mdbook-mermaid install mdbooks/<书名>`，它会
+  - 往该书 `book.toml` 写入 `[preprocessor.mermaid] command = "mdbook-mermaid"` 与 `[output.html] additional-js = ["mermaid.min.js", "mermaid-init.js"]`
+  - 在书目录生成 `mermaid.min.js` / `mermaid-init.js`（**生成物，已 gitignore、不入库**）
+- 两处必须都有 `mdbook-mermaid`：
+  - **本地**：`cargo install mdbook-mermaid`（本机 0.17.1，用 `mdbook-mermaid --version` 核对）；本地构建前若缺这两个 js，重新跑一次 `mdbook-mermaid install mdbooks/<书名>` 生成即可
+  - **CI**：`.github/workflows/deploy.yml` 装 `mdbook-mermaid@0.17.1`，并在 `dx build` 前对每本声明了 `[preprocessor.mermaid]` 的书运行 `mdbook-mermaid install` 重新生成 js（因 js 不入库）
+- 深浅色主题跟随由 `mermaid-init.js` 处理，无需改动；新增用图的书无需改 CI（CI 按 `book.toml` 自动识别）
+- 校验：`mdbook build mdbooks/<书名> --dest-dir <临时目录>` 或整站 `dx build`，打开对应页看是否出图
+
+
 ## 构建与部署流水线
 
 - 工作流：`.github/workflows/deploy.yml`，`push main` 或手动 `workflow_dispatch` 触发
-- 步骤：checkout → 装 wasm32 工具链 → `Swatinem/rust-cache` → `taiki-e/install-action` 装 `dioxus-cli@0.7.10` → `taiki-e/install-action` 装 `mdbook@0.5.4` → `dx build --release --platform web` → `configure-pages` → `upload-pages-artifact` → `deploy-pages`
+- 步骤：checkout → 装 wasm32 工具链 → `Swatinem/rust-cache` → `taiki-e/install-action` 装 `dioxus-cli@0.7.10` → `taiki-e/install-action` 装 `mdbook@0.5.4` → `taiki-e/install-action` 装 `mdbook-mermaid@0.17.1` → 对声明 `[preprocessor.mermaid]` 的书运行 `mdbook-mermaid install` 重新生成 `mermaid.min.js` / `mermaid-init.js` → `dx build --release --platform web` → `configure-pages` → `upload-pages-artifact` → `deploy-pages`
 - **产物路径（硬编码在 CI 中）**：`webpage/target/dx/webpage/release/web/public`
   其中的 `webpage` 来自 `Cargo.toml` 的 `package.name`。**重命名 crate 必须同步修改 `deploy.yml` 的 `path`。**
 - 仓库 `Settings → Pages → Source` 必须为 **GitHub Actions**
@@ -111,6 +128,7 @@ persona/
 7. `webpage/public/` 是**生成物**（已在 `.gitignore` 中忽略），不要手工放文件进去（会被 `build.rs` 的清理逻辑覆盖 `public/books/`）。
 8. 内容清单 `books/manifest.toml` / `mdbooks/manifest.toml` 的 `id` 建议显式给出 ASCII 短名：中文文件名自动推导出的别名不稳定，会导致线上 URL 变化。
 9. **新增 / 修改游戏条目时，`tags` 只能取 `webpage/src/tags.rs` 硬编码的 8 个标签，禁止自造标签。** 该 8 分类**已锁定，不再新增**——更通俗的玩法分类（RTS、4X、战棋等）写进 `review` 正文。合法性由 `src/tags.rs` 的测试 `test_game_tags_should_cover_all_games` 保证。
+10. **mdbook 用图（Mermaid）的两个前置条件都要满足**：① `mdbook-mermaid` 预处理器在 PATH；② 书目录下有 `mermaid.min.js` / `mermaid-init.js`（`mdbook-mermaid install` 的生成物，已 gitignore、**不入库**）。缺①时，声明了 `[preprocessor.mermaid]` 的书会被 mdbook 以**报错**中断（除非加 `optional = true` 降级为告警，但那样图不渲染），进而被 `build.rs` 跳过、该书整本不上线；缺②时 `additional-js` 找不到文件同样构建失败。故本地克隆后需 `cargo install mdbook-mermaid` 并跑一次 `mdbook-mermaid install mdbooks/<书名>`；CI 已自动安装并在构建前重新生成 js。`mdbook-mermaid` 版本需与本地一致（0.17.1），生成的 js 与版本绑定。
 
 ## 编码规范
 

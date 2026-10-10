@@ -17,3 +17,9 @@ name = "分布式"
 path = "Distributed"
 id = "distributed"
 intro = "分布式、微服务相关知识的学习笔记。"
+
+[[book]]
+name = "后端开发"
+path = "BackendDevelopment"
+id = "BackendDevelopment"
+intro = "后端开发相关知识的学习笔记。"
