@@ -11,6 +11,8 @@
 | `platform` | string | 平台，如 `PC`、`Nintendo Switch` |
 | `status` | string | 游玩状态，如 `已通关`、`进行中` |
 | `score` | number | 评分（10 分制） |
+| `release_date` | string | 发行日期，ISO `YYYY-MM-DD`（如 `2000-09-28`） |
+| `rating` | string | 评级，**文字形式**（如 `PEGI 12`、`ESRB T`），不使用评级标识图 |
 | `tags` | string[] | 标签，**取值必须来自 `src/tags.rs` 的 `GAME_TAGS`** |
 | `review` | string | 评价正文（可用 `"""..."""` 多行） |
 
@@ -52,15 +54,20 @@ Sports Games
 | **Rhythm Games** | 在讨论音乐游戏的"游戏性"之前要知道：合着节奏发出声音的乐趣，源自最原始的喜悦，人类可以纯粹地享受它；而且越是玩听熟了的曲子越能沉浸。在此基础上加入博弈与风险回报会更有挑战（例：《狂热节拍》系列——比完美时机稍晚即判定失败）。 |
 | **Sports Games** | 真实的运动本身自带博弈，搬到电脑上时就已具备某种游戏性；由现实存在的队伍与选手构成，仅此就能让游戏好玩，再加上玩家能明确操控自己的队伍，便能沉浸在比赛的悲欢离合之中。 |
 
-## 示例文件
+## 排序
 
-文件名即排序依据：
+游戏页按**发行日期**升序排列；发行日期相同则按**名称**升序排列。两者均为 Rust 字符串序
+（日期以 ISO `YYYY-MM-DD` 存储，字符串序即时间先后）。排序逻辑见 `webpage/src/data.rs` 的 `filter_games`。
+
+## 示例文件
 
 ```toml
 name = "示例游戏"
 platform = "PC"
 status = "已通关"
 score = 8.5
+release_date = "2012-11-26"
+rating = "PEGI 3"
 tags = ["Games That Are Fun to Control", "Building & Crafting Games"]
 review = """
 一段评价……

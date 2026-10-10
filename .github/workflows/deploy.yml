@@ -48,6 +48,23 @@ jobs:
         with:
           tool: mdbook@0.5.4
 
+      # 渲染 ```mermaid 图需要 mdbook-mermaid 预处理器本体（本地 0.17.1，版本需对齐避免产物差异）
+      - name: Install mdbook-mermaid
+        uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook-mermaid@0.17.1
+
+      # mermaid.min.js / mermaid-init.js 是 `mdbook-mermaid install` 的生成物（已 gitignore、不入库）
+      # 云端对每本声明了 [preprocessor.mermaid] 的书重新生成（对已配置的书是幂等的）
+      # 注：run 步骤沿用 job 默认工作目录 webpage/，故用 ../mdbooks 指向仓库根
+      - name: Generate mdbook-mermaid assets
+        run: |
+          for book_toml in ../mdbooks/*/book.toml; do
+            if grep -q '^\[preprocessor\.mermaid\]' "$book_toml"; then
+              mdbook-mermaid install "$(dirname "$book_toml")"
+            fi
+          done
+
       - name: Build web app
         run: dx build --release --platform web
 

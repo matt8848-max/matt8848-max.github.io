@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "欧洲卡车模拟2"
+platform = "PC"
+status = "进行中"
+score = 10
+release_date = "2012-11-26"
+rating = "PEGI 3"
+tags = ["Games Based on Real Life"]
+review = """模拟驾驶体验一流，在车类游戏里也算得上是另类。游戏一直在持续更新，非常好玩。"""

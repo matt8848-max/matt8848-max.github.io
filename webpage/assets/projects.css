@@ -1,0 +1,102 @@
+/* 项目页样式：搜索框 + 项目列表 */
+
+.projects {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.projects-topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.projects-back {
+    padding: 8px 14px;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.projects-back:hover {
+    background: var(--surface-hover);
+}
+
+.projects-title {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.projects-search {
+    width: 100%;
+    padding: 16px 18px;
+    margin-bottom: 32px;
+    font-size: 1.05rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+}
+
+.projects-search:focus {
+    border-color: var(--accent);
+}
+
+.projects-empty {
+    color: var(--text-muted);
+}
+
+.projects-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.projects-item {
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.projects-item:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent);
+}
+
+.projects-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.projects-purpose {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.projects-url {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--accent-hover);
+    font-size: 0.9rem;
+    word-break: break-all;
+}
+
+.projects-url:hover {
+    text-decoration: underline;
+}
+
+/* 地址为空时的灰色占位，不表现为链接 */
+.projects-url-empty {
+    color: var(--text-muted);
+}

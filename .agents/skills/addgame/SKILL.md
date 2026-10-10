@@ -1,6 +1,6 @@
 ---
 name: addgame
-description: 向本仓库新增或修改一款游戏的评价条目（games/ 下的 *.toml）。当用户要求"添加/新增一个游戏评价"、编辑游戏信息、或涉及 games/ 数据时触发。说明字段格式、标签必须取自 webpage/src/tags.rs 硬编码的 8 个标签（该分类已锁定）、文件名即排序，以及构建 / 测试 / 本地验证流程。
+description: 向本仓库新增或修改一款游戏的评价条目（games/ 下的 *.toml）。当用户要求"添加/新增一个游戏评价"、编辑游戏信息、或涉及 games/ 数据时触发。说明字段格式、标签必须取自 webpage/src/tags.rs 硬编码的 8 个标签（该分类已锁定）、按发行日期排序，以及构建 / 测试 / 本地验证流程。
 ---
 
 # addgame —— 新增游戏评价
@@ -15,12 +15,12 @@ description: 向本仓库新增或修改一款游戏的评价条目（games/ 下
 ## 关键约束
 
 1. **一个游戏一个文件**：`games/<id>.toml`，`<id>` 用 ASCII 短名（如 `stellaris.toml`）。
-   **文件名即列表排序依据**（`build.rs` 按文件名字典序排列），要调整顺序就改文件名。
+   列表排序在运行期完成（`webpage/src/data.rs` 的 `filter_games`）：按 `release_date` → `name` 升序。
 2. **`tags` 必须取自 `webpage/src/tags.rs` 中硬编码的 8 个标签**（`GAME_TAGS` 的 `name` 字段），禁止自造；一个游戏可带多个标签。
    该 8 分类**已锁定，不再新增**——更通俗的玩法分类（RTS、4X 大战略、战棋 SRPG 等）写进 `review` 正文。
    出现清单外的标签，`cargo test`（`test_game_tags_should_cover_all_games`）会**直接失败**。
 3. 标签清单是代码常量（`webpage/src/tags.rs`），不再有 `tags.toml` 之类的外部清单文件。
-4. 字段（除 `name` 外均可省略）：`name` / `platform` / `status` / `score` / `tags` / `review`。
+4. 字段（除 `name` 外均可省略）：`name` / `platform` / `status` / `score` / `release_date`（ISO `YYYY-MM-DD`）/ `rating`（文字，如 `PEGI 12`）/ `tags` / `review`。
    **没有 `played_at`**（游玩时间字段已移除，不要写）。
 
 ## 字段
@@ -31,6 +31,8 @@ description: 向本仓库新增或修改一款游戏的评价条目（games/ 下
 | `platform` | string | 平台，如 `PC`、`Nintendo Switch` |
 | `status` | string | 游玩状态，如 `已通关`、`进行中` |
 | `score` | number | 评分（10 分制，可省略） |
+| `release_date` | string | 发行日期，ISO `YYYY-MM-DD`，如 `2000-09-28` |
+| `rating` | string | 评级，文字形式（如 `PEGI 12`、`ESRB T`），不使用评级标识图 |
 | `tags` | string[] | 标签，**必须来自 `webpage/src/tags.rs` 的 `GAME_TAGS`** |
 | `review` | string | 评价正文，多行用 `"""..."""` |
 
@@ -56,6 +58,8 @@ name = "群星"
 platform = "PC"
 status = "进行中"
 score = 10
+release_date = "2016-05-09"
+rating = "PEGI 7"
 tags = ["Building & Crafting Games"]
 review = """Paradox（P社）出品的太空 4X 大战略……"""
 ```

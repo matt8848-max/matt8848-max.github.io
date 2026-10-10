@@ -19,11 +19,14 @@ fn is_checked(checked: &[String], tag: &str) -> bool {
     checked.iter().any(|item| item == tag)
 }
 
-/// 拼接游戏条目的 meta 行文案：把非空的 `platform` / `status` 用 ` · ` 连接。
+/// 拼接游戏条目的 meta 行文案：把非空的 `platform` / `status` / `release_date` / `rating`
+/// 用 ` · ` 连接。
 ///
-/// 两者都为空时返回 `None`，页面据此整行不渲染，避免出现空段或多余分隔符。
+/// 全部为空时返回 `None`，页面据此整行不渲染，避免出现空段或多余分隔符。
+/// 发行日期直接以 ISO `YYYY-MM-DD` 文本展示；评级以文字（如 `PEGI 12`）展示，
+/// 不使用受版权保护的评级标识图。
 fn game_meta(game: &Game) -> Option<String> {
-    let parts: Vec<&str> = [game.platform, game.status]
+    let parts: Vec<&str> = [game.platform, game.status, game.release_date, game.rating]
         .into_iter()
         .filter(|part| !part.is_empty())
         .collect();
@@ -190,6 +193,8 @@ mod tests {
             platform,
             status,
             score: None,
+            release_date: "",
+            rating: "",
             tags: &[],
             review: "",
         }
@@ -218,5 +223,24 @@ mod tests {
     #[test]
     fn test_game_meta_should_be_none_when_all_empty() {
         assert_eq!(game_meta(&game_with("", "")), None);
+    }
+
+    /// 发行日期（ISO 文本）与评级（文字）也应并入 meta 行。
+    #[test]
+    fn test_game_meta_should_include_release_date_and_rating() {
+        let game = Game {
+            name: "测试游戏",
+            platform: "PC",
+            status: "已通关",
+            score: None,
+            release_date: "2000-09-28",
+            rating: "PEGI 12",
+            tags: &[],
+            review: "",
+        };
+        assert_eq!(
+            game_meta(&game).as_deref(),
+            Some("PC · 已通关 · 2000-09-28 · PEGI 12")
+        );
     }
 }

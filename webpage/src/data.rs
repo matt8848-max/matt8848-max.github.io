@@ -5,17 +5,22 @@
 
 include!(concat!(env!("OUT_DIR"), "/books.rs"));
 include!(concat!(env!("OUT_DIR"), "/games.rs"));
+include!(concat!(env!("OUT_DIR"), "/projects.rs"));
 
 /// 按书名检索书籍。
 ///
 /// 关键字为空（或仅含空白）时返回全部书籍；否则做**大小写不敏感**的子串匹配。
+/// 结果按书名以 Rust 字符串序（`str` 的 `Ord`）升序排序。
 /// 返回借用自入参的引用，避免拷贝书籍数据。
 pub fn search_books<'a>(books: &'a [Book], query: &str) -> Vec<&'a Book> {
     let needle = query.trim().to_lowercase();
-    books
+    let mut hits: Vec<&Book> = books
         .iter()
         .filter(|book| needle.is_empty() || book.name.to_lowercase().contains(&needle))
-        .collect()
+        .collect();
+    // 知识库按书名排序：使用 Rust 的字符串序（`str` 的 `Ord`，即 UTF-8 字节序）升序。
+    hits.sort_by_key(|book| book.name);
+    hits
 }
 
 /// 按关键字 + 勾选的标签筛选游戏。
@@ -26,10 +31,11 @@ pub fn search_books<'a>(books: &'a [Book], query: &str) -> Vec<&'a Book> {
 ///   「其余标签也都未勾选」的游戏。每个游戏都至少带一个标签（见 `crate::tags` 的不变量
 ///   测试 `test_games_should_all_have_at_least_one_tag`），故这里无需为「无标签游戏」兜底。
 ///
+/// 结果按「发行日期 → 名称」以 Rust 字符串序升序排序（日期以 ISO `YYYY-MM-DD` 存储）。
 /// 返回借用自入参的引用，避免拷贝游戏数据。
 pub fn filter_games<'a>(games: &'a [Game], query: &str, checked: &[String]) -> Vec<&'a Game> {
     let needle = query.trim().to_lowercase();
-    games
+    let mut hits: Vec<&Game> = games
         .iter()
         .filter(|game| needle.is_empty() || game.name.to_lowercase().contains(&needle))
         .filter(|game| {
@@ -37,7 +43,26 @@ pub fn filter_games<'a>(games: &'a [Game], query: &str, checked: &[String]) -> V
                 .iter()
                 .any(|tag| checked.iter().any(|candidate| candidate.as_str() == *tag))
         })
-        .collect()
+        .collect();
+    // 游戏库先按发行日期、再按名称排序，均用 Rust 的字符串序升序。
+    // `release_date` 以 ISO `YYYY-MM-DD` 存储，故字符串序即时间先后。
+    hits.sort_by_key(|game| (game.release_date, game.name));
+    hits
+}
+
+/// 按项目名检索项目词条。
+///
+/// 关键字为空（或仅含空白）时返回全部项目；否则对**项目名**做**大小写不敏感**的子串匹配。
+/// 结果按项目名以 Rust 字符串序（`str` 的 `Ord`）升序排序。
+/// 返回借用自入参的引用，避免拷贝项目数据。
+pub fn search_projects<'a>(projects: &'a [Project], query: &str) -> Vec<&'a Project> {
+    let needle = query.trim().to_lowercase();
+    let mut hits: Vec<&Project> = projects
+        .iter()
+        .filter(|project| needle.is_empty() || project.name.to_lowercase().contains(&needle))
+        .collect();
+    hits.sort_by_key(|project| project.name);
+    hits
 }
 
 #[cfg(test)]
@@ -106,6 +131,8 @@ mod tests {
                 platform: "PC",
                 status: "已通关",
                 score: Some(9.0),
+                release_date: "2018-01-25",
+                rating: "PEGI 7",
                 tags: &["Games That Are Fun to Control"],
                 review: "",
             },
@@ -114,6 +141,8 @@ mod tests {
                 platform: "DS",
                 status: "进行中",
                 score: None,
+                release_date: "2008-07-31",
+                rating: "PEGI 3",
                 tags: &["Rhythm Games"],
                 review: "",
             },
@@ -122,6 +151,9 @@ mod tests {
                 platform: "PC",
                 status: "已通关",
                 score: None,
+                // 与 Celeste 同发行日，用于验证「日期相同再按名称」的次级排序
+                release_date: "2018-01-25",
+                rating: "PEGI 7",
                 tags: &["Rhythm Games", "Sports Games"],
                 review: "",
             },
@@ -195,5 +227,101 @@ mod tests {
         let games = sample_games();
         let checked = vec!["Rhythm Games".to_string()];
         assert!(filter_games(&games, "zelda", &checked).is_empty());
+    }
+
+    /// 知识库结果应按书名的 Rust 字符串序（UTF-8 字节序）升序排列。
+    ///
+    /// `'R'`(U+0052) < `'算'`(U+7B97)；同为 `Rust ` 前缀时 `'实'`(U+5B9E) < `'程'`(U+7A0B)。
+    #[test]
+    fn test_search_books_should_sort_by_name() {
+        let books = sample_books();
+        let names: Vec<&str> = search_books(&books, "")
+            .iter()
+            .map(|book| book.name)
+            .collect();
+        assert_eq!(names, vec!["Rust 实战", "Rust 程序设计", "算法"]);
+    }
+
+    /// 游戏结果应先按发行日期升序；日期相同时再按名称（Rust 字符串序）升序。
+    #[test]
+    fn test_filter_games_should_sort_by_release_date_then_name() {
+        let games = sample_games();
+        // 全部标签勾选，只检验排序
+        let checked: Vec<String> = vec![
+            "Games That Are Fun to Control".to_string(),
+            "Rhythm Games".to_string(),
+            "Sports Games".to_string(),
+        ];
+        let names: Vec<&str> = filter_games(&games, "", &checked)
+            .iter()
+            .map(|game| game.name)
+            .collect();
+        // Rhythm Heaven(2008) 最早；Celeste 与「混合类型」同为 2018-01-25，
+        // 按名称 `'C'`(U+0043) < `'混'`(U+6DF7) 排序
+        assert_eq!(names, vec!["Rhythm Heaven", "Celeste", "混合类型"]);
+    }
+
+    /// 构造用于测试的项目集合（与真实清单解耦，保证测试稳定）。
+    fn sample_projects() -> Vec<Project> {
+        vec![
+            Project {
+                name: "Ledger App",
+                purpose: "个人记账",
+                url: "",
+            },
+            Project {
+                name: "记账工具",
+                purpose: "记账",
+                url: "",
+            },
+            Project {
+                name: "简历管理工具",
+                purpose: "管理简历",
+                url: "https://example.com/cv",
+            },
+        ]
+    }
+
+    /// 验证空关键字会返回全部项目（项目页默认列出全部）。
+    #[test]
+    fn test_search_projects_should_return_all_when_query_empty() {
+        let projects = sample_projects();
+        assert_eq!(search_projects(&projects, "").len(), projects.len());
+    }
+
+    /// 验证仅含空白的关键字同样被视作空。
+    #[test]
+    fn test_search_projects_should_treat_whitespace_as_empty() {
+        let projects = sample_projects();
+        assert_eq!(search_projects(&projects, "   ").len(), projects.len());
+    }
+
+    /// 验证匹配为大小写不敏感的子串匹配，并已忽略首尾空白。
+    #[test]
+    fn test_search_projects_should_match_case_insensitively() {
+        let projects = sample_projects();
+        let hit = search_projects(&projects, "  LEDGER ");
+        assert_eq!(hit.len(), 1);
+        assert_eq!(hit[0].name, "Ledger App");
+    }
+
+    /// 验证无匹配时返回空集合（项目页展示空态提示）。
+    #[test]
+    fn test_search_projects_should_return_empty_for_no_match() {
+        let projects = sample_projects();
+        assert!(search_projects(&projects, "不存在的项目").is_empty());
+    }
+
+    /// 项目结果应按名称的 Rust 字符串序（UTF-8 字节序）升序排列。
+    ///
+    /// `'L'`(U+004C) < `'简'`(U+7B80) < `'记'`(U+8BB0)。
+    #[test]
+    fn test_search_projects_should_sort_by_name() {
+        let projects = sample_projects();
+        let names: Vec<&str> = search_projects(&projects, "")
+            .iter()
+            .map(|project| project.name)
+            .collect();
+        assert_eq!(names, vec!["Ledger App", "简历管理工具", "记账工具"]);
     }
 }

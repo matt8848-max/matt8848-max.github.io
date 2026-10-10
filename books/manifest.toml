@@ -11,3 +11,9 @@ name = "WSL2：安装 CUDA、中文字体与 torch"
 path = "WSL2_Ubuntu安装CUDA、中文字体、torch.md"
 id = "wsl2-cuda-torch"
 intro = "在 WSL2 的 Ubuntu 中配置 CUDA、挂载中文字体并安装 PyTorch 的完整记录。"
+
+[[book]]
+name = "Steam版或EA版红警2玩心灵终结3教程"
+path = "心灵终结3游玩教程.md"
+id = "mental-omega-3"
+intro = "在 Steam / EA 版红警2（尤里的复仇）基础上安装并游玩《心灵终结3》的完整步骤。"

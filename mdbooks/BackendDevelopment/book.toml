@@ -1,0 +1,13 @@
+[book]
+title = "后端开发"
+authors = ["matt8848-max"]
+language = "en"
+
+[output.html]
+mathjax-support = true
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
