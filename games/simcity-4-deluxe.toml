@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "模拟城市4：豪华版"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2004-03-05"
+rating = "PEGI 3"
+tags = ["Building & Crafting Games", "Games Based on Real Life"]
+review = """Maxis 出品的经典城市建造模拟，豪华版整合了原版与《尖峰时刻》资料片。作为老游戏 IP，它开创了模拟类的一大玩法：划区（住宅／商业／工业）、铺路、通水通电、调税率与预算，看着一座城市从荒地长成都市，9/10。缺点是地图过于大，前期铺路和后期的通勤、污染维护都很花时间；城市之间的联动性偏差。不过 PEGI 3 也说明它足够平易近人，很适合当作城市建造类游戏的入门与标杆。"""
