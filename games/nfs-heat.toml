@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "极品飞车21：热度"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2019-11-08"
+rating = "PEGI 16"
+tags = ["Games That Are Fun to Control", "Cinematic & Story-Focused Games"]
+review = """操作可以，可惜剧情烂尾了。值得一玩，9 分。已通关。"""

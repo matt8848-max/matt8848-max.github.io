@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "极品飞车16：亡命狂飙"
+platform = "PC"
+status = "已通关"
+score = 8
+release_date = "2011-10-15"
+rating = "PEGI 16"
+tags = ["Games That Are Fun to Control", "Cinematic & Story-Focused Games"]
+review = """剧情不错，操作一般，可惜是个半成品。已通关。"""
