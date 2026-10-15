@@ -41,6 +41,37 @@
     font-size: 1.6rem;
 }
 
+/* 游戏数量：「当前筛选出的数量 - 全部数量」，靠右对齐到标题栏末端 */
+.games-count {
+    /* 把数量推到顶栏最右侧，不影响左侧的返回按钮与标题 */
+    margin-left: auto;
+    display: inline-flex;
+    align-items: baseline;
+    /* 数字用等宽字形，筛选时位数变化不会左右抖动 */
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 筛选结果数：用强调色，作为当前视口的「主角」 */
+.games-count-shown {
+    color: var(--accent-hover);
+}
+
+/* 分隔符：刻意弱化，避免被读成减号算式 */
+.games-count-sep {
+    margin: 0 2px;
+    color: var(--text-muted);
+    font-weight: 400;
+    opacity: 0.6;
+}
+
+/* 全部数量：弱化为次要信息，与筛选结果数形成对比 */
+.games-count-total {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
 /* 搜索框：与知识库一致的视觉（控件命名为 games- 前缀，避免跨页样式耦合） */
 .games-search {
     width: 100%;

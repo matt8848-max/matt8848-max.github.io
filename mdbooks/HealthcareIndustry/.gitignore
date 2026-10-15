@@ -1,0 +1,5 @@
+book
+
+# mdbook-mermaid 的生成物（由 `mdbook-mermaid install` 拷贝），不入库；本地/CI 构建前重新生成
+mermaid.min.js
+mermaid-init.js

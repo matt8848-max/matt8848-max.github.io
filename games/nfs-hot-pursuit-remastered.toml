@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "极品飞车14：热力追踪 复刻版"
+platform = "PC / NS / XBOX / PS"
+status = "已通关"
+score = 10
+release_date = "2020-11-13"
+rating = "PEGI 7"
+tags = ["Games That Are Fun to Control"]
+review = """纯粹的赛车游戏，没有多余的东西。漂移很好玩：上手容易，精通难。10 分。"""

@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "模拟城市5：未来之城"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2013-09-20"
+rating = "PEGI 7"
+tags = ["Building & Crafting Games", "Games Based on Real Life"]
+review = """2013 年《模拟城市》（俗称「模拟城市5」）的资料片，城市建造套上近未来的皮，9/10。缺点是地图过于小，一座城市的地皮很快就会铺满，逼着玩家靠未来之城的新机制与区域分工来腾挪；但也正因如此，它和区域里其它城市的联动性很好——资源、服务、产业链真正互相依赖、牵一发而动全身，这一点比 4 强得多。"""

@@ -1,0 +1,15 @@
+[book]
+title = "医疗行业"
+authors = ["matt8848-max"]
+language = "en"
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output]
+
+[output.html]
+mathjax-support = true
+additional-js = ["mermaid.min.js", "mermaid-init.js"]

@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "极品飞车9：最高通缉"
+platform = "PC"
+status = "已通关"
+score = 10
+release_date = "2005-11-04"
+rating = "PEGI 12"
+tags = ["Games That Are Fun to Control", "Cinematic & Story-Focused Games"]
+review = """经典的街头竞速游戏：黑名单系统与警匪追逐奠定了系列后续的框架，剧情演出也很带感。以今天的眼光看，它和现代赛车游戏的差别其实不大——真正的区别是年代更早，对现代玩家来说稍微偏难。10 分。"""

@@ -1,6 +1,6 @@
 ---
 name: mdbookwrite
-description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 章节。当用户要求新增或编辑某本 mdbook 书的一篇 .md、处理文件内以 #AI 开头的编写任务、把章节登记到 src/SUMMARY.md、或新增一本书并在 mdbooks/manifest.toml 登记时触发。涵盖工程结构、MathJax 数学公式、Mermaid 图表、可运行 Rust 代码块、#AI 任务约定与本地构建 / 预览流程。
+description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 章节。当用户要求新增或编辑某本 mdbook 书的一篇 .md、处理文件内以 #AI 开头的编写任务、把章节登记到 src/SUMMARY.md、新增一本书并在 mdbooks/manifest.toml 登记、或把外部政策 / 公文 / 标准文件转写为章节（须在文件开头标注来源）时触发。涵盖工程结构、MathJax 数学公式、Mermaid 图表、可运行 Rust 代码块、#AI 任务约定、外部文件转写的来源标注与本地构建 / 预览流程。
 ---
 
 # mdbookwrite —— 编写单个 mdbook 文件
@@ -13,6 +13,7 @@ description: 编写与修改本仓库 mdbooks/ 下 mdbook 工程里的 Markdown 
 - 处理文件内以 `#AI` 开头的**编写任务**（见「`#AI` 任务约定」）
 - 新增一本书：建 `book.toml` / `src/SUMMARY.md`，并在 `mdbooks/manifest.toml` 登记
 - 把新章节登记进 `src/SUMMARY.md`
+- 把外部文件（政策 / 公文 / 标准 / 规范）转写为章节——**须在文件开头标注来源**（见「外部文件转写」）
 - 在章节里插入 / 修改 Mermaid 图表（见「图表（Mermaid）」）
 
 ## 工程结构
@@ -156,6 +157,32 @@ mdbook-mermaid install mdbooks/<书名>
 - 每本用图的书都要各自跑一次 `mdbook-mermaid install`（js 是按书存放的）；新增用图的书后 CI 会自动识别，无需改 workflow。
 
 
+## 外部文件转写（政策 / 公文 / 标准等）
+
+把外部文件（政策、公文、标准、规范等）转写成书里的章节时——例如 `mdbooks/HealthcareIndustry/src/政策法规/`——**必须在文件第一行用引用块（`> `）记录来源**，再写标题与正文。
+
+**为什么**：这类章节是**转述**而非原创。读者需要能回到原文核对内容、版本与时效；来源一旦丢失，文件就成了无法追溯的文本。
+
+**写法**（按获取方式选一种）：
+
++ 网页转写：`> 此文件转写自<来源名称>：<url>`
+    + 现有例子：`> 此文件转写自中国政府网：<https://www.gov.cn/zhengce/zhengceku/202511/content_7047018.htm>`
++ PDF / 图片 OCR：`> 此文件是基于<来源>的 PDF 进行 OCR 所得`
+    + 现有例子：`> 此文件是基于互联网上所查询所得的[PDF](https://www.cdhfct.com/uploadfile/file/20260409/20260409055642_97467.pdf)进行OCR所得`
+
+来源要写成**可点击的链接**：网页用尖括号自动链接 `<url>`，PDF / 图片用 Markdown 链接 `[PDF](url)` 或 `[图片](url)`；实在拿不到链接时，至少写明获取渠道与日期。
+
+其余约定：
+
++ 来源块之后紧跟标题（`#`）与文号（如 `**国卫办规划发〔2025〕30号**`），再逐项列出元信息（发文机关 / 成文日期 / 公文种类 / 来源 / 信息公开形式），便于检索。
++ **照抄原文用词**，不改写、不节选、不总结；确需删减时明确标注省略位置。
++ 条款序号保留原文格式，且**点号后不加空格**：`1.加强紧密型县域医共体智能应用。……` 与 `（一）强化基础设施建设。……` 都会渲染成普通段落；若写成 `1. 加强…`（点号 + 空格），会被解析成有序列表并跨小节自动续号，与原文编号不符。
++ 落款（发文机关、日期）用引用块逐行排列，与正文分隔。
++ 新增文件后**登记进 `src/SUMMARY.md`**（分组标题用 `#`）。
++ 校验：`mdbook build mdbooks/<书名>`，确认首行来源块渲染为引用块、条款序号没被解析成列表（产物 HTML 里 `<ol>` 计数为 0）。
+
+**参考**：`mdbooks/HealthcareIndustry/src/政策法规/` 下两篇文件（一篇网页转写、一篇 PDF OCR）。
+
 ## `#AI` 任务约定
 
 **以 `#AI` 开头的行是留给 AI 的编写任务标记**（`#` 与 `AI` 之间无空格，因此不会被 Markdown 当成标题）。它可能出现在正文，也可能出现在 rust 代码块内部。处理方式：
@@ -223,10 +250,11 @@ intro = "一句话简介"
 6. **Mermaid 生成物别提交**：`mermaid.min.js` / `mermaid-init.js` 是 `mdbook-mermaid install` 的生成物，已在书目录 `.gitignore` 忽略；本地缺了就重跑 `install`，CI 会自动生成。
 7. **用图的书别漏装预处理器**：`mdbook-mermaid` 不在 PATH 时，声明 `[preprocessor.mermaid]` 的书会被 mdbook 报错中断、整本不上线（除非 `optional = true`，但那样图不渲染）。本机用 `cargo install mdbook-mermaid`（0.17.1）。
 8. **Mermaid 围栏语言写对**：必须是 ` ```mermaid `，写成 ` ``` ` 或 ` ```text ` 都只会显示成代码块，不会被渲染成图。
+9. **政策 / 公文转写漏标来源**：外部文件转写来的章节，第一行必须是来源引用块（网页给 URL、PDF/OCR 说明获取方式），见「外部文件转写」。
 
 ## 参考
 
 - 范例章节：`mdbooks/Algorithm/src/使用场景/算法的基本概念.md`
 - 范例图表：`mdbooks/BackendDevelopment/src/操作系统/网络系统.md`（` ```mermaid ` 代码块）
-- 站点集成：`webpage/build.rs`（`build_mdbooks` / `run_mdbook`）、`CLAUDE.md`「内容管线」/「在 mdbook 里画图（Mermaid）」章节
+- 站点集成：`webpage/build.rs`（`build_mdbooks` / `run_mdbook`）、`CLAUDE.md`「内容管线」/「新增政策文件（外部文件转写）」/「在 mdbook 里画图（Mermaid）」章节
 - 注释 / 测试规范：`rustweb` skill 的 `docs/coding-standards.md`

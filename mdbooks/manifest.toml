@@ -23,3 +23,9 @@ name = "后端开发"
 path = "BackendDevelopment"
 id = "BackendDevelopment"
 intro = "后端开发相关知识的学习笔记。"
+
+[[book]]
+name = "医疗行业"
+path = "HealthcareIndustry"
+id = "HealthcareIndustry"
+intro = "医疗行业相关的政策法规与行业知识笔记。"

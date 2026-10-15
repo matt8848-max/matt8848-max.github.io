@@ -72,6 +72,10 @@ pub fn Games() -> Element {
     // 读取一次勾选状态，供渲染与筛选共用，避免重复借用信号
     let checked = checked_tags();
     let games = filter_games(GAMES, &query(), &checked);
+    // 数量显示用「当前筛选出的数量 - 全部数量」。先取值再消费 `games`，避免在 RSX 里二次借用。
+    let shown = games.len();
+    let total = GAMES.len();
+    let count_title = format!("当前筛选出 {shown} 个，共 {total} 个");
 
     rsx! {
         document::Stylesheet { href: GAMES_CSS }
@@ -83,6 +87,13 @@ pub fn Games() -> Element {
                 header { class: "games-topbar",
                     Link { class: "games-back", to: Route::Home {}, "← 返回主页" }
                     h1 { class: "games-title", "游戏评价" }
+                    // 数量显示：「当前筛选出的数量 - 全部数量」。
+                    // 两个数字刻意用不同颜色（前=强调色、后=次要色），一眼分清哪个是筛选结果。
+                    span { class: "games-count", title: "{count_title}",
+                        span { class: "games-count-shown", "{shown}" }
+                        span { class: "games-count-sep", "-" }
+                        span { class: "games-count-total", "{total}" }
+                    }
                 }
                 input {
                     class: "games-search",

@@ -91,6 +91,22 @@ persona/
 - 校验流程：`cargo test`（`src/data.rs` 的 `search_projects` 用例）→ `clippy` / `fmt` → `dx build` → 本地预览 `#/projects`
 
 
+## 新增政策文件（外部文件转写）
+
+把外部内容（政策文件、公文、标准、规范等）转写成书里的章节时（现有例子：`mdbooks/HealthcareIndustry/src/政策法规/`），**必须在该文件的第一行用引用块记录来源**，再写标题与正文：
+
+- 网页：`> 此文件转写自<来源名称>：<url>`
+  例：`> 此文件转写自中国政府网：<https://www.gov.cn/zhengce/zhengceku/202511/content_7047018.htm>`
+- PDF / 图片 OCR：`> 此文件是基于<来源>的 PDF 进行 OCR 所得`
+  例：`> 此文件是基于互联网上所查询所得的[PDF](https://www.cdhfct.com/uploadfile/file/20260409/20260409055642_97467.pdf)进行OCR所得`
+
+来源尽量写成**可点击的链接**（尖括号自动链接 `<url>`，或 Markdown 链接 `[标题](url)`），方便一键回到原文。
+
+理由：这类章节是**转述**而非原创，读者需要能回溯到原文核对内容、版本与时效；来源一旦丢失就无法核对。
+
+其余要点（元信息逐项列出、照抄原文用词不改写、条款序号保留原文格式、登记 `src/SUMMARY.md`）见 `.agents/skills/mdbookwrite/`（可用 `mdbookwrite` skill 加载）。
+
+
 ## 在 mdbook 里画图（Mermaid）
 
 用 `mdbook-mermaid` 在 mdbook 章节里画流程图 / 时序图等：

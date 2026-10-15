@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "最终幻想4 像素复刻版"
+platform = "Nintendo Switch"
+status = "已通关"
+score = 10
+release_date = "2023-04-28"
+rating = "PEGI 7"
+tags = ["Cinematic & Story-Focused Games"]
+review = """像素复刻版的第 4 代，引入 ATB 实时战斗，剧情评价很高，是这一批里我最喜欢的一作。确实经典，值得一玩。已通关，还做完了全图鉴收集。10 分。"""

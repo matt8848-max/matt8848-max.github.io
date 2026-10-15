@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "魔女之泉3 Re:Fine"
+platform = "Steam"
+status = "已通关"
+score = 9
+release_date = "2021-11-02"
+rating = "PEGI 7"
+tags = ["Cinematic & Story-Focused Games", "Building & Crafting Games"]
+review = """同样是偏养成的 JRPG，剧情可以，但存在字体 bug。已通关，9 分。玩的是 Steam 版；NS 版发售于 2021 年 6 月 30 日，分级为 PEGI 7。我也玩过手机原版，这个 Re 版的立绘没那么好看。"""

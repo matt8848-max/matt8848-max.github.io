@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "魔女之泉R"
+platform = "Steam"
+status = "已通关"
+score = 10
+release_date = "2023-09-26"
+rating = "PEGI 12"
+tags = ["Cinematic & Story-Focused Games", "Building & Crafting Games"]
+review = """非常不错的 JRPG，偏养成：难度适中，战斗不难，剧情可以。已通关，10 分。PEGI 上没有收录本作的分级，这里采用 NS 版的分级；玩的是 Steam 版。"""
