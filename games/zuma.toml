@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "祖玛"
+platform = "PC"
+status = "已通关"
+score = 10
+release_date = "2007-10-15"
+rating = "PEGI 3"
+tags = ["Games That Are Fun to Control"]
+review = """宝开（PopCap）的经典休闲游戏，好玩爱玩。在短时间内思考该怎么打得更多分是它的特色，吃手脑配合。已通关，10 分。"""

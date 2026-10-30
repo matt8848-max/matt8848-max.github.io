@@ -5,5 +5,6 @@ platform = "Nintendo Switch 2"
 status = "已通关"
 score = 9
 release_date = "2026-02-19"
+rating = "PEGI 12"
 tags = ["Games That Are Fun to Control", "Cinematic & Story-Focused Games"]
 review = """已经全地图完成通关，9 分。歌好听，也有操作——谁不喜欢开机甲。"""

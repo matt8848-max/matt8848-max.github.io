@@ -1,9 +1,10 @@
 # 单个游戏评价。字段说明见 games/README.md；
 # tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
 name = "极品飞车17：最高通缉"
-platform = "PC"
+platform = "Windows PC / PlayStation 3 / PS Vita / Xbox 360"
 status = "已通关"
 score = 7
 release_date = "2012-10-30"
+rating = "ESRB E10+"
 tags = ["Games That Are Fun to Control"]
-review = """街车太多、动画太长，操作延迟明显，而且没有剧情。已通关。"""
+review = """街车太多、动画太长，操作延迟明显，而且没有剧情。已通关。评级取自 ESRB（Everyone 10+，含酒精引用、恶作剧与暴力要素）。"""

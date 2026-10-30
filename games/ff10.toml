@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "最终幻想10"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2016-05-12"
+rating = "PEGI 12"
+tags = ["Cinematic & Story-Focused Games"]
+review = """剧情可以，战斗系统也可以——可以在战斗中随时换人这套思路，后来被米哈游的《崩坏：星穹铁道》拿去了。麻烦的是终极武器和词典的获取：关键道具被绑在小游戏上，那个小游戏纯屎。现代玩家想获得完整体验，推荐先准备一个全词典 + 全终极武器材料的存档。已通关。"""

@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "最终幻想13-2"
+platform = "PC（Xbox）"
+status = "已通关"
+score = 8
+release_date = "2014-12-09"
+rating = "PEGI 16"
+tags = ["Cinematic & Story-Focused Games"]
+review = """相比上一部改进了不少，算是一部合规的最终幻想。战斗系统改得不错，剧情也好；但你很难想象即使使用 10 年后的设备，仍会有少部分场景卡顿。在 Xbox PC 平台上全成就通关，8 分。"""

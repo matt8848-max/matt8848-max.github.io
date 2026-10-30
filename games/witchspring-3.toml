@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "魔女之泉3"
+platform = "Android"
+status = "已通关"
+score = 10
+release_date = "2017-10-27"
+tags = ["Cinematic & Story-Focused Games", "Building & Crafting Games"]
+review = """安卓原版，已通关，10 分。偏养成的 JRPG，难度一贯不高，剧情与系统都和系列前两作一脉相承，非常好玩。注意：Steam 上的《魔女之泉3 Re:Fine》是本作的重制版，两者是不同版本。"""

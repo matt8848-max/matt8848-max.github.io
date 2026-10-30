@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "星球大战 绝地：陨落的武士团"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2019-11-15"
+rating = "PEGI 16"
+tags = ["Cinematic & Story-Focused Games", "Games That Are Fun to Control"]
+review = """《星球大战》授权改编的动作冒险游戏，光剑手感做得好，战斗系统与续作《幸存者》一脉相承。收集体验不如第二部顺畅。已通关，9 分。"""

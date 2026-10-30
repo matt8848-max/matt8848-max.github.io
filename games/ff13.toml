@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "最终幻想13"
+platform = "PC"
+status = "已通关"
+score = 6
+release_date = "2014-10-09"
+rating = "PEGI 16"
+tags = ["Cinematic & Story-Focused Games"]
+review = """全面倒退的一作：剧情一般（突出一个乱序讲故事）、战斗一般、系统一般，唯一有提升的是画质。已通关，6 分。"""
