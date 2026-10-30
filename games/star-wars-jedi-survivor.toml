@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "星球大战 绝地：幸存者"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2023-04-28"
+rating = "PEGI 12"
+tags = ["Cinematic & Story-Focused Games", "Games That Are Fun to Control"]
+review = """第二部，收集体验改进明显，战斗系统与《陨落的武士团》一脉相承，都不错。缺点是优化偏差。Steam 全成就通关，9 分。"""

@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "火焰之纹章：圣魔之光石"
+platform = "Game Boy Advance"
+status = "已通关"
+score = 10
+release_date = "2005-11-04"
+rating = "PEGI 7"
+tags = ["Cinematic & Story-Focused Games", "Games That Are Fun to Control"]
+review = """GBA 三部曲的最后一部。战棋（SRPG）玩法，上手简单、没什么难度，剧情还行；非常好玩，多次通关，10 分。"""

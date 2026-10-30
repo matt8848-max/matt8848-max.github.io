@@ -11,3 +11,4 @@ additional-js = ["mermaid.min.js", "mermaid-init.js"]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
+mathjax-support = true

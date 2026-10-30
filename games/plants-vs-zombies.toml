@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "植物大战僵尸 1代"
+platform = "PC / Android"
+status = "已通关"
+score = 10
+release_date = "2009-10-28"
+rating = "PEGI 12"
+tags = ["Building & Crafting Games"]
+review = """来自宝开的经典休闲游戏（塔防）。难度不高，但先种什么、哪一路先补，还是有一定策略。PC 版与安卓版均已通关，10 分。"""

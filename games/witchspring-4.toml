@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "魔女之泉4"
+platform = "Android"
+status = "已通关"
+score = 10
+release_date = "2019-12-19"
+tags = ["Cinematic & Story-Focused Games", "Building & Crafting Games"]
+review = """系列第四作，安卓版已通关，10 分。依旧是偏养成的 JRPG，一脉相承、没什么难度，非常好玩。"""
