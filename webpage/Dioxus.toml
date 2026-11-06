@@ -8,7 +8,7 @@ public_dir = "public"
 [web.app]
 
 # HTML title tag content
-title = "Persona"
+title = "个人自用网站"
 
 # include `assets` in web platform
 [web.resource]

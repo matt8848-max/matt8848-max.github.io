@@ -17,3 +17,9 @@ name = "Steam版或EA版红警2玩心灵终结3教程"
 path = "心灵终结3游玩教程.md"
 id = "mental-omega-3"
 intro = "在 Steam / EA 版红警2（尤里的复仇）基础上安装并游玩《心灵终结3》的完整步骤。"
+
+[[book]]
+name = "游戏王MD关于效果发动、执行的检查"
+path = "游戏王MD关于效果发动、执行的检查.md"
+id = "yugioh-md-effect-checks"
+intro = "游戏王MD在效果发动、执行时的检查链：发动条件、排除 cost 后的场面状态、分支条件与位置变化。"

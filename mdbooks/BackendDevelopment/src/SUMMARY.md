@@ -18,11 +18,17 @@
 
 # Redis
 
-
+- [基础](./redis/基础.md)
+- [Redis常见数据类型及其应用场景](./redis/数据类型.md)
+- [高可用性](./redis/高可用性.md)
 - [缓存](./redis/缓存.md)
-- [Redis面试题](./redis/面试题.md)
+
+- [Redis常见面试题](./redis/常见面试题.md)
+
+
 # 面试题
 
+- [Redis面试题](./redis/面试题.md)
 - [MySQL面试题](./mysql/面试题.md)
 - [Go面试题](./go/面试题.md)
 - [后端面试题](./后端面试/面试题.md)

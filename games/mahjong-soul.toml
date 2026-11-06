@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "雀魂麻将"
+platform = "PC（Steam）"
+status = "进行中"
+score = 9
+release_date = "2020-07-15"
+tags = ["Games Based on Real Life"]
+review = """四麻游戏。UI 做得恰当好处，不花，也不太简洁，纯图一乐的心态还行。断断续续地在玩。"""

@@ -1,0 +1,11 @@
+[book]
+title = "人工智能"
+authors = ["matt8848-max"]
+language = "zh_cn"
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+mathjax-support = true

@@ -1,0 +1,8 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "反叛公司"
+platform = "PC"
+score = 9
+release_date = "2021-10-14"
+tags = ["Games Based on Real Life"]
+review = """好玩，策略性不错。"""
