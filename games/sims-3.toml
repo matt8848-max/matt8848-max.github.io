@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "模拟人生3"
+platform = "PC"
+status = "玩过了"
+score = 10
+release_date = "2009-06-02"
+rating = "PEGI 12"
+tags = ["Games Based on Real Life", "Building & Crafting Games"]
+review = """3 代的系统不错，但是时代久远，其实容易爆内存。官方也没有修，最后给出了一个折中方案 4 代。游戏性本身可以。"""

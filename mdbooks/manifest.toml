@@ -29,3 +29,9 @@ name = "医疗行业"
 path = "HealthcareIndustry"
 id = "HealthcareIndustry"
 intro = "医疗行业相关的政策法规与行业知识笔记。"
+
+[[book]]
+name = "人工智能"
+path = "Deeplearing"
+id = "deeplearning"
+intro = "人工智能原理及其应用的学习笔记。"

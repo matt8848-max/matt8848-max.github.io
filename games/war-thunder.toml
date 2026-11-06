@@ -1,0 +1,8 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "战争雷霆"
+platform = "PC"
+status = "进行中"
+score = 8
+tags = ["Games That Are Fun to Control"]
+review = """运营多年的网游，深刻让你体会苏式运营和苏式工艺为什么会是那样。至今在玩。"""

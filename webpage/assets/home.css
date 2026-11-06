@@ -1,27 +1,33 @@
-/* 主页样式：标题 + 一排排的入口按钮 */
+/* 主页样式：标题 + 一排排的入口按钮 + 贴底的声明 */
 
 .home {
+    display: flex;
+    flex-direction: column;
     max-width: 720px;
+    min-height: 100vh;
     margin: 0 auto;
-    padding: 96px 20px;
+    padding: 96px 20px 32px;
     text-align: center;
 }
 
 .home-title {
-    margin: 0;
+    margin: 0 0 48px;
     font-size: clamp(2.4rem, 8vw, 3.6rem);
     letter-spacing: 0.04em;
-}
-
-.home-subtitle {
-    margin: 12px 0 48px;
-    color: var(--text-muted);
 }
 
 .home-nav {
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+/* `margin-top: auto` 把声明推到页面底部；配合 `.home` 的纵向 flex 与 `min-height: 100vh` 生效 */
+.home-footer {
+    margin-top: auto;
+    padding-top: 48px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
 .home-button {

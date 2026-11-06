@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "这是我的战争"
+platform = "PC"
+status = "已通关"
+score = 8
+release_date = "2014-11-14"
+rating = "PEGI 18"
+tags = ["Cinematic & Story-Focused Games"]
+review = """游戏一般般。其实你只要知道了所有要素，能直接从开局规划到结束。"""

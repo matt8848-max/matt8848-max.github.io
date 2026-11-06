@@ -1,0 +1,8 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "我的世界"
+platform = "PC（Java 版）"
+status = "进行中"
+score = 10
+tags = ["Building & Crafting Games"]
+review = """早期手机版、Java 版都玩过，非常好玩，至今在玩。本人主玩 Java 版，还会打点光影改善画面、用红石材质包改善操作。（发行日期和分级我不记得了。）"""

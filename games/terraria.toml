@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "泰拉瑞亚"
+platform = "PC"
+status = "玩过了"
+score = 10
+release_date = "2012-03-01"
+rating = "PEGI 12"
+tags = ["Building & Crafting Games", "Games That Are Fun to Control"]
+review = """手机版（v1.2，和现在的新 UI 不同）和 Steam 版都玩过，非常好玩。"""

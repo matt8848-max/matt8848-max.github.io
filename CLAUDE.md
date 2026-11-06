@@ -30,7 +30,7 @@ persona/
 │   ├── public/                   # build.rs 生成物（gitignore）：书籍静态页 / mdbook 产物
 │   ├── src/                      # main / app / route / data / tags + pages/ + components/
 │   ├── tests/build_util.rs       # 构建脚本纯逻辑的集成测试
-│   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/projects/not_found）+ favicon.ico
+│   └── assets/                   # base.css + 每页一个 CSS（home/knowledge/games/projects/not_found）+ 站点图标（favicon.ico / favicon-32.png / apple-touch-icon-180.png / icon-192.png）
 └── 任务清单.md
 ```
 

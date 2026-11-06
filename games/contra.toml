@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "魂斗罗"
+platform = "FC"
+status = "已通关"
+score = 9
+release_date = "1987"
+tags = ["Games That Are Fun to Control"]
+review = """小时候玩过的优秀作品，本人手贱，靠 30 条命才打通关。"""

@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "Elin"
+platform = "PC"
+status = "进行中"
+score = 9
+release_date = "2024-11-01"
+tags = ["Building & Crafting Games"]
+review = """来自 Steam 的独立游戏，正统肉鸽（roguelike）玩法，此游戏偏难。仍在 EA 阶段持续更新、尚未正式发售（<https://store.steampowered.com/app/2135150/Elin/>），EA 版本的发行日期是 2024 年 11 月 1 日。"""

@@ -15,13 +15,13 @@ pub fn Home() -> Element {
     rsx! {
         document::Stylesheet { href: HOME_CSS }
         main { class: "home",
-            h1 { class: "home-title", "Persona" }
-            p { class: "home-subtitle", "个人主页 · 学习与记录" }
+            h1 { class: "home-title", "个人自用网站" }
             nav { class: "home-nav",
                 Link { class: "home-button", to: Route::Knowledge {}, "知识库" }
                 Link { class: "home-button", to: Route::Games {}, "游戏评价" }
                 Link { class: "home-button", to: Route::Projects {}, "项目" }
             }
+            footer { class: "home-footer", "此网站为自用网站，如有侵权联系删除。" }
         }
     }
 }

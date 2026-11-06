@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "模拟人生4"
+platform = "PC"
+status = "玩过了"
+score = 9
+release_date = "2014-09-04"
+rating = "PEGI 12"
+tags = ["Games Based on Real Life", "Building & Crafting Games"]
+review = """还算好玩，反正我表妹上头了。"""
