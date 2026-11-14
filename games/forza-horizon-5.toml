@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "极限竞速：地平线5"
+platform = "PC"
+status = "已通关"
+score = 9
+release_date = "2021-11-09"
+rating = "PEGI 3"
+tags = ["Games That Are Fun to Control", "Games Based on Real Life"]
+review = """开放世界赛车，操作手感不错——赛车游戏基本都是玩操作的。没《极品飞车14》好玩：FH 系列的老问题是音效不好，FH5 还非常网游化（赛季、线上活动），个人不太喜欢。首发内容已经全部打完。"""

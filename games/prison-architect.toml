@@ -1,0 +1,9 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "监狱建筑师"
+platform = "PC"
+score = 9
+release_date = "2015-10-06"
+rating = "PEGI 16"
+tags = ["Building & Crafting Games", "Games Based on Real Life"]
+review = """Introversion Software 出品的监狱建造与经营模拟，本人玩大规模模拟类游戏的启蒙作。突出一个瞎玩也能玩：不追评分，随便圈地、拉电网、招狱警也能转起来；不过游戏本身的 bug 确实不少。"""

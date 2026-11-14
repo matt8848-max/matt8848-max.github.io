@@ -1,0 +1,10 @@
+# 单个游戏评价。字段说明见 games/README.md；
+# tags 必须取自 webpage/src/tags.rs 中硬编码的 8 个标签之一。
+name = "火焰纹章：Fortune's Wave"
+platform = "Nintendo Switch 2"
+status = "已通关"
+score = 10
+release_date = "2026-09-17"
+rating = "PEGI 12"
+tags = ["Cinematic & Story-Focused Games", "Games That Are Fun to Control"]
+review = """量大管饱的养成向战棋（SRPG），好玩，10 分。偏重角色养成，练人、刷支援的循环很上头；策略性不如另外一个组做的火焰纹章。等 DLC 出完再打一遍。"""
